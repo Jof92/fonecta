@@ -1,0 +1,60 @@
+.fornecedor-form {
+  max-width: 400px;
+  margin: 2rem auto;
+  padding: 16px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  font-family: 'Arial', sans-serif;
+}
+
+.form-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-align: center;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+/* Grupo de cada campo */
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-label {
+  font-size: 0.85rem;
+  color: #444;
+  margin-bottom: 4px;
+}
+
+.form-input {
+  font-size: 1rem;
+  padding: 6px 8px;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  background: transparent;
+  transition: border-color 0.2s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-bottom: 1px solid #007bff;
+}
+
+.form-button {
+  margin-top: 8px;
+  padding: 10px;
+  font-size: 1rem;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.form-button:hover {
+  background: #0056b3;
+}

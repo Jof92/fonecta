@@ -1,0 +1,11 @@
+.empty-state {
+  text-align: center;
+  color: #777;
+  margin-top: 2rem;
+  font-style: italic;
+}
+
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+}

@@ -1,0 +1,166 @@
+.fornecedor-list-container {
+  padding: 20px;
+  border: 1.5px solid #ccc;
+  border-radius: 12px;
+  background-color: #f9fafb;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+  height: 300px;
+  overflow-y: auto;
+}
+
+.fornecedor-list {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+.fornecedor-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 8px;
+}
+
+.fornecedor-item.editando {
+  margin-bottom: 20px;
+  flex-direction: column;
+}
+
+.fornecedor-item.editando input[type='text'] {
+  width: 100%;
+  display: block;
+  margin-bottom: 6px;
+  padding: 6px;
+  font-size: 1rem;
+}
+
+.fornecedor-info {
+  flex: 1;
+  margin-right: 1rem;
+}
+
+.fornecedor-actions {
+  display: flex;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.fornecedor-whatsapp-link {
+  color: #25d366;
+  text-decoration: none;
+}
+
+.fornecedor-whatsapp-link:hover {
+  text-decoration: underline;
+}
+
+.action-icon {
+  cursor: pointer;
+  color: #333;
+  transition: color 0.2s ease-in-out;
+  font-size: 1.2rem;
+}
+
+.action-icon:hover {
+  color: #007bff;
+}
+
+.tag-button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin-right: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: #555;
+  transition: color 0.2s;
+}
+
+.tag-button:hover {
+  color: #007bff;
+  text-decoration: underline;
+}
+
+/* Wrapper geral para limitar largura e centralizar */
+.fornecedor-wrapper {
+  max-width: 600px;
+  margin: 2rem auto;
+}
+
+/* Campo de busca com botão X para limpar */
+.search-input-wrapper {
+  position: relative;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.search-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 32px 8px 8px; /* espaço para o botão X à direita */
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.clear-button {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: #888;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+}
+
+.clear-button:hover {
+  color: #000;
+}
+
+.edit-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.btn {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn.salvar {
+  background-color: #a8d0ff; /* azul clarinho */
+  color: #003366; /* azul escuro */
+}
+
+.btn.salvar:hover {
+  background-color: #7ab1ff;
+}
+
+.btn.cancelar {
+  background-color: #d0e4ff; /* azul muito claro */
+  color: #0059b3;
+}
+
+.btn.cancelar:hover {
+  background-color: #a0c4ff;
+}
+
+.action-icon.copied {
+  color: #28a745 !important; /* verde */
+  transition: color 0.3s ease;
+}
+
+

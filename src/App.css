@@ -1,0 +1,49 @@
+/* Container principal que ocupa a tela toda */
+.app-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Cabeçalho com altura fixa */
+.app-header {
+  padding: 1rem 2rem;
+  border-bottom: 1px solid #ccc;
+  flex: 0 0 60px;
+  display: flex;
+  align-items: center;
+  margin: 0;
+}
+
+/* Conteúdo principal com 2 colunas e rolagem interna */
+.app-main {
+  flex: 1;
+  display: flex;
+  justify-content: center; /* centraliza os filhos horizontalmente */
+  padding: 1rem 2rem;
+  gap: 2rem;
+  overflow: hidden;
+}
+
+/* Coluna do formulário com largura fixa e rolagem vertical */
+.app-form-container {
+  flex: 0 0 300px;
+  overflow-y: auto;
+}
+
+/* Coluna da lista com flexível e rolagem vertical */
+.app-list-container {
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* Footer fixo com altura definida */
+.app-footer {
+  flex: 0 0 40px;
+  border-top: 1px solid #ccc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #666;
+}
