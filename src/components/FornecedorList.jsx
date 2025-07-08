@@ -66,15 +66,10 @@ export default function FornecedorList() {
   }
 
   const salvarEdicao = async (id) => {
-    console.log('Salvando edição para fornecedor id:', id)
-    
-    // Garante que tags não sejam vazias antes de processar
     const tagsArray = form.tags
       .split(/[\s,]+/)
       .filter((tag) => tag.startsWith('#'))
       .map((tag) => tag.toLowerCase())
-
-    console.log('Tags processadas:', tagsArray)
 
     const { error } = await supabase
       .from('fornecedores')
@@ -88,9 +83,7 @@ export default function FornecedorList() {
 
     if (error) {
       alert('Erro ao editar: ' + error.message)
-      console.error('Erro ao editar:', error)
     } else {
-      console.log('Fornecedor atualizado com sucesso!')
       cancelarEdicao()
       buscarFornecedores()
     }
@@ -101,9 +94,7 @@ export default function FornecedorList() {
     navigator.clipboard.writeText(texto).then(() => {
       setCopiadoId(f.id)
       setTimeout(() => setCopiadoId(null), 2000)
-    }).catch(() => {
-      // opcional: feedback de erro
-    })
+    }).catch(() => {})
   }
 
   return (
@@ -219,6 +210,11 @@ export default function FornecedorList() {
           )}
         </ul>
       </div>
+
+      {/* Texto fora do quadro, abaixo da lista */}
+      <p className="fornecedor-quantidade">
+        Total de fornecedores exibidos: {fornecedores.length}
+      </p>
     </div>
   )
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { supabase } from '../supabaseClient'
 import './FornecedorForm.css'
 
@@ -7,6 +7,51 @@ export default function FornecedorForm() {
   const [empresa, setEmpresa] = useState('')
   const [whatsapp, setWhatsapp] = useState('')
   const [tags, setTags] = useState('')
+  const [todasTags, setTodasTags] = useState([])
+  const [sugestoes, setSugestoes] = useState([])
+
+  useEffect(() => {
+    const carregarTags = async () => {
+      const { data, error } = await supabase.from('fornecedores').select('tags')
+
+      if (error) {
+        console.error('Erro ao buscar tags:', error)
+        return
+      }
+
+      const tagsUnicas = new Set()
+      data.forEach((f) => {
+        f.tags?.forEach((tag) => tagsUnicas.add(tag.toLowerCase()))
+      })
+
+      setTodasTags(Array.from(tagsUnicas))
+    }
+
+    carregarTags()
+  }, [])
+
+  const handleTagsChange = (e) => {
+    const texto = e.target.value
+    setTags(texto)
+
+    const partes = texto.split(/\s+/)
+    const ultima = partes[partes.length - 1]
+
+    if (ultima.length >= 4 && ultima.startsWith('#')) {
+      const termo = ultima.toLowerCase()
+      const filtradas = todasTags.filter((tag) => tag.startsWith(termo) && tag !== termo)
+      setSugestoes(filtradas.slice(0, 5))
+    } else {
+      setSugestoes([])
+    }
+  }
+
+  const handleSugestaoClick = (tagSelecionada) => {
+    const partes = tags.trim().split(/\s+/)
+    partes[partes.length - 1] = tagSelecionada
+    setTags(partes.join(' ') + ' ')
+    setSugestoes([])
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -59,6 +104,7 @@ export default function FornecedorForm() {
       setEmpresa('')
       setWhatsapp('')
       setTags('')
+      setSugestoes([])
     }
   }
 
@@ -95,13 +141,28 @@ export default function FornecedorForm() {
       />
 
       <label className="form-label">Hashtags:</label>
-      <input
-        className="form-input"
-        type="text"
-        value={tags}
-        onChange={(e) => setTags(e.target.value)}
-        placeholder="#tag1 #tag2"
-      />
+      <div style={{ position: 'relative' }}>
+        <input
+          className="form-input"
+          type="text"
+          value={tags}
+          onChange={handleTagsChange}
+          placeholder="#tag1 #tag2"
+        />
+        {sugestoes.length > 0 && (
+          <ul className="tag-sugestoes">
+            {sugestoes.map((sug, idx) => (
+              <li
+                key={idx}
+                className="tag-sugestao"
+                onClick={() => handleSugestaoClick(sug)}
+              >
+                {sug}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
 
       <button className="form-button" type="submit">
         Cadastrar

@@ -1,45 +1,107 @@
-/* Container principal que ocupa a tela toda */
+/* Container principal com fundo em degradê animado baseado no logo FONECTA */
 .app-container {
   height: 100vh;
   display: flex;
   flex-direction: column;
+  background: linear-gradient(135deg, #009DFF, #00B8D9, #00C48C);
+  background-size: 400% 400%;
+  animation: gradientMove 15s ease infinite;
 }
 
-/* Cabeçalho com altura fixa */
+/* Animação do fundo para efeito de movimento suave */
+@keyframes gradientMove {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Cabeçalho fixo no topo com sombra leve */
 .app-header {
-  padding: 1rem 2rem;
+  padding: .5rem 2rem;
   border-bottom: 1px solid #ccc;
   flex: 0 0 60px;
   display: flex;
   align-items: center;
-  margin: 0;
+  justify-content: space-between;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-/* Conteúdo principal com 2 colunas e rolagem interna */
+/* Container do logo + título na esquerda do header */
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* espaço entre logo e texto */
+}
+
+/* Logo Fonecta */
+.logo-fonecta {
+  height: 36px;
+  object-fit: contain;
+}
+
+/* Título FONECTA */
+.fonecta-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #0066ff;
+}
+
+.logo-parceira {
+  height: 60px;
+  width: 60px;
+  border-radius: 50%;
+  object-fit: contain;
+  border: 3px solid #009DFF; /* borda azul forte do degradê */
+  background-color: white;
+  padding: 1px;
+  box-sizing: border-box;
+}
+
+
+/* Conteúdo principal com layout em colunas */
 .app-main {
   flex: 1;
   display: flex;
-  justify-content: center; /* centraliza os filhos horizontalmente */
-  padding: 1rem 2rem;
+  justify-content: center;
+  align-items: stretch; /* forçar altura igual */
+  padding: 2rem;
   gap: 2rem;
   overflow: hidden;
+  flex-wrap: nowrap; /* manter em linha */
 }
 
-/* Coluna do formulário com largura fixa e rolagem vertical */
+/* Bloco do formulário (largura fixa) */
 .app-form-container {
-  flex: 0 0 300px;
-  overflow-y: auto;
+  flex: 0 0 320px;
+  max-height: 80vh;
+  background-color: #ffffff;
+  border-radius: 1rem;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  padding: 1rem;
+
 }
 
-/* Coluna da lista com flexível e rolagem vertical */
+/* Bloco da lista (flexível) */
 .app-list-container {
   flex: 1;
-  overflow-y: auto;
+  max-height: 80vh;
+  background-color: #ffffff;
+  border-radius: 1rem;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  padding: 1rem;
 }
 
-/* Footer fixo com altura definida */
+/* Rodapé com fundo fixo branco */
 .app-footer {
   flex: 0 0 40px;
+  background-color: #ffffff;
   border-top: 1px solid #ccc;
   display: flex;
   justify-content: center;
