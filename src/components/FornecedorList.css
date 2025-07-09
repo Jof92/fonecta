@@ -198,5 +198,125 @@
   background-color: #f0f0f0;
 }
 
+/* Contêiner da lista de sugestões */
+.tag-sugestoes {
+  position: absolute;
+  top: 100%; /* logo abaixo do input */
+  left: 0;
+  right: 0;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  max-height: 180px;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  font-size: 0.9rem;
+  color: #333;
+  user-select: none;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+/* Cada sugestão */
+.tag-sugestao {
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+/* Hover e foco para sugestão */
+.tag-sugestao:hover,
+.tag-sugestao:focus {
+  background-color: #e6f0ff;
+  outline: none;
+ 
+}
+
+/* Botão Selecionar menor e compacto */
+.selecionar-btn {
+  padding: 2px 6px;
+  font-size: 0.75rem;
+  border-radius: 4px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin-left: auto; /* empurra para direita */
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+}
+
+.selecionar-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Container para botões copiar e deletar ao lado do selecionar */
+.selection-actions {
+  display: flex;
+  gap: 6px;
+  margin-left: 8px;
+  align-items: center;
+}
+
+/* Ícones ainda menores e alinhados */
+.selection-actions svg {
+  font-size: 14px;
+  cursor: pointer;
+  color: #007bff;
+  transition: color 0.2s ease;
+}
+
+.selection-actions svg:hover {
+  color: #0056b3;
+}
+
+.selection-actions .fa-trash {
+  color: #dc3545;
+}
+
+.selection-actions .fa-trash:hover {
+  color: #a71d2a;
+}
+
+/* Desabilita cursor e cor se sem seleção */
+.selection-actions .disabled {
+  cursor: not-allowed;
+  color: #aaa !important;
+}
+
+/* Itens da lista com checkbox e botão na mesma linha */
+.fornecedor-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #ccc;
+}
+
+/* Checkbox menor com margem */
+.fornecedor-item input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  margin-right: 8px;
+}
+
+/* Texto e info flexíveis */
+.fornecedor-info {
+  flex: 1;
+}
+
+/* Ajusta botões de tag menores */
+.tag-button {
+  font-size: 0.7rem;
+  margin-right: 5px;
+  padding: 1px 5px;
+}
+
 
 

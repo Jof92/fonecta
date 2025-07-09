@@ -15,28 +15,128 @@ export default function FornecedorList() {
     tags: ''
   })
 
+  const [modoSelecao, setModoSelecao] = useState(false)
+  const [selecionados, setSelecionados] = useState(new Set())
   const [copiadoId, setCopiadoId] = useState(null)
+  const [sugestoes, setSugestoes] = useState([])
+  const [mostrarSugestoes, setMostrarSugestoes] = useState(false)
 
   useEffect(() => {
     buscarFornecedores()
   }, [busca])
 
   const buscarFornecedores = async () => {
-    let query = supabase.from('fornecedores').select('*')
-
-    if (busca.trim() !== '') {
-      const texto = busca.toLowerCase()
-      query = query.or(
-        `nome.ilike.%${texto}%,empresa.ilike.%${texto}%,tags.cs.{${texto}}`
-      )
-    }
-
-    const { data, error } = await query
+    const { data, error } = await supabase.from('fornecedores').select('*')
 
     if (error) {
       console.error('Erro ao buscar fornecedores:', error)
-    } else {
+      return
+    }
+
+    if (busca.trim() === '') {
       setFornecedores(data)
+      setSelecionados(new Set())
+      setModoSelecao(false)
+      return
+    }
+
+    const termo = busca.toLowerCase()
+
+    const filtrados = data.filter(f =>
+      (f.nome && f.nome.toLowerCase().includes(termo)) ||
+      (f.empresa && f.empresa.toLowerCase().includes(termo)) ||
+      (Array.isArray(f.tags) && f.tags.some(tag => tag.toLowerCase().includes(termo)))
+    )
+
+    setFornecedores(filtrados)
+    setSelecionados(new Set())
+    setModoSelecao(false)
+  }
+
+  const buscarSugestoes = async (texto) => {
+    if (texto.length < 4) {
+      setSugestoes([])
+      setMostrarSugestoes(false)
+      return
+    }
+
+    const { data: tagsData, error: tagsError } = await supabase
+      .from('fornecedores')
+      .select('tags')
+      .not('tags', 'is', null)
+      .limit(50)
+
+    if (tagsError) {
+      console.error('Erro ao buscar tags:', tagsError)
+      setSugestoes([])
+      setMostrarSugestoes(false)
+      return
+    }
+
+    let tags = []
+    if (tagsData) {
+      tagsData.forEach(f => {
+        if (f.tags && Array.isArray(f.tags)) {
+          tags.push(...f.tags)
+        }
+      })
+    }
+    const tagsFiltradas = [...new Set(tags)].filter(tag =>
+      tag.toLowerCase().includes(texto.toLowerCase())
+    )
+
+    const tagsComHash = tagsFiltradas.map(t => (t.startsWith('#') ? t : `#${t}`))
+
+    setSugestoes(tagsComHash)
+    setMostrarSugestoes(true)
+  }
+
+  const toggleModoSelecao = () => {
+    if (modoSelecao) {
+      setSelecionados(new Set())
+      setModoSelecao(false)
+    } else {
+      setModoSelecao(true)
+    }
+  }
+
+  const toggleSelecionado = (id) => {
+    const novosSelecionados = new Set(selecionados)
+    if (novosSelecionados.has(id)) {
+      novosSelecionados.delete(id)
+    } else {
+      novosSelecionados.add(id)
+    }
+    setSelecionados(novosSelecionados)
+  }
+
+  const copiarSelecionados = () => {
+    if (selecionados.size === 0) return
+
+    const contatosParaCopiar = fornecedores
+      .filter(f => selecionados.has(f.id))
+      .map(f => `Nome: ${f.nome}\nEmpresa: ${f.empresa}\nWhatsApp: ${f.whatsapp}`)
+      .join('\n\n')
+
+    navigator.clipboard.writeText(contatosParaCopiar).then(() => {
+      setCopiadoId('multi')
+      setTimeout(() => setCopiadoId(null), 2000)
+    }).catch(() => {})
+  }
+
+  const deletarSelecionados = async () => {
+    if (selecionados.size === 0) return
+    if (!window.confirm(`Tem certeza que deseja excluir ${selecionados.size} fornecedor(es)?`)) return
+
+    const idsArray = Array.from(selecionados)
+    const { error } = await supabase.from('fornecedores').delete().in('id', idsArray)
+
+    if (error) {
+      alert('Erro ao excluir: ' + error.message)
+    } else {
+      setSelecionados(new Set())
+      setModoSelecao(false)
+      buscarFornecedores()
     }
   }
 
@@ -58,6 +158,8 @@ export default function FornecedorList() {
       whatsapp: f.whatsapp,
       tags: f.tags?.join(' ') || ''
     })
+    setModoSelecao(false)
+    setSelecionados(new Set())
   }
 
   const cancelarEdicao = () => {
@@ -68,8 +170,8 @@ export default function FornecedorList() {
   const salvarEdicao = async (id) => {
     const tagsArray = form.tags
       .split(/[\s,]+/)
-      .filter((tag) => tag.startsWith('#'))
-      .map((tag) => tag.toLowerCase())
+      .filter(tag => tag.startsWith('#'))
+      .map(tag => tag.toLowerCase())
 
     const { error } = await supabase
       .from('fornecedores')
@@ -101,13 +203,18 @@ export default function FornecedorList() {
     <div className="fornecedor-wrapper">
       <h2>Buscar Fornecedores</h2>
 
-      <div className="search-input-wrapper">
+      <div className="search-input-wrapper" style={{ position: 'relative' }}>
         <input
           type="text"
           placeholder="Digite nome, empresa ou #tag"
           value={busca}
-          onChange={(e) => setBusca(e.target.value)}
+          onChange={(e) => {
+            setBusca(e.target.value)
+            buscarSugestoes(e.target.value)
+          }}
           className="search-input"
+          onFocus={() => busca.length >= 4 && setMostrarSugestoes(true)}
+          onBlur={() => setTimeout(() => setMostrarSugestoes(false), 150)}
         />
         {busca && (
           <button
@@ -118,6 +225,51 @@ export default function FornecedorList() {
           >
             ×
           </button>
+        )}
+
+        {mostrarSugestoes && sugestoes.length > 0 && (
+          <ul className="tag-sugestoes">
+            {sugestoes.map((tag, i) => (
+              <li
+                key={i}
+                className="tag-sugestao"
+                onMouseDown={() => {
+                  setBusca(tag)
+                  setMostrarSugestoes(false)
+                }}
+              >
+                {tag}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      <div style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem' }}>
+        <button
+          className="btn selecionar-btn"
+          onClick={toggleModoSelecao}
+          type="button"
+          style={{ marginRight: '1rem' }}
+        >
+          {modoSelecao ? 'Cancelar' : 'Selecionar'}
+        </button>
+
+        {modoSelecao && (
+          <>
+            <FaCopy
+              title="Copiar selecionados"
+              onClick={copiarSelecionados}
+              style={{ cursor: selecionados.size > 0 ? 'pointer' : 'not-allowed', marginRight: '1rem', color: selecionados.size > 0 ? '#007bff' : '#aaa' }}
+              size={20}
+            />
+            <FaTrash
+              title="Deletar selecionados"
+              onClick={deletarSelecionados}
+              style={{ cursor: selecionados.size > 0 ? 'pointer' : 'not-allowed', color: selecionados.size > 0 ? '#dc3545' : '#aaa' }}
+              size={20}
+            />
+          </>
         )}
       </div>
 
@@ -155,13 +307,25 @@ export default function FornecedorList() {
                   />
                   <br />
                   <div className="edit-buttons">
-                    <button className="btn salvar" onClick={() => salvarEdicao(f.id)}>Salvar</button>
-                    <button className="btn cancelar" onClick={cancelarEdicao}>Cancelar</button>
+                    <button className="btn salvar" onClick={() => salvarEdicao(f.id)}>
+                      Salvar
+                    </button>
+                    <button className="btn cancelar" onClick={cancelarEdicao}>
+                      Cancelar
+                    </button>
                   </div>
                 </li>
               ) : (
                 <li key={f.id} className="fornecedor-item">
-                  <div className="fornecedor-info">
+                  {modoSelecao && (
+                    <input
+                      type="checkbox"
+                      checked={selecionados.has(f.id)}
+                      onChange={() => toggleSelecionado(f.id)}
+                      style={{ marginRight: '10px' }}
+                    />
+                  )}
+                  <div className="fornecedor-info" style={{ flex: 1 }}>
                     <strong>{f.nome}</strong> — {f.empresa} <br />
                     📱{' '}
                     <a
@@ -185,33 +349,32 @@ export default function FornecedorList() {
                       </button>
                     ))}
                   </div>
-                  <div className="fornecedor-actions">
-                    <FaCopy
-                      className={`action-icon ${copiadoId === f.id ? 'copied' : ''}`}
-                      title="Copiar contato"
-                      onClick={() => copiarContato(f)}
-                    />
-                    <FaEdit
-                      onClick={() => iniciarEdicao(f)}
-                      className="action-icon"
-                      title="Editar"
-                    />
-                    <FaTrash
-                      onClick={() => deletarFornecedor(f.id)}
-                      className="action-icon"
-                      title="Excluir"
-                    />
-                  </div>
+                  {!modoSelecao && (
+                    <div className="fornecedor-actions">
+                      <FaCopy
+                        className={`action-icon ${copiadoId === f.id ? 'copied' : ''}`}
+                        title="Copiar contato"
+                        onClick={() => copiarContato(f)}
+                      />
+                      <FaEdit
+                        onClick={() => iniciarEdicao(f)}
+                        className="action-icon"
+                        title="Editar"
+                      />
+                      <FaTrash
+                        onClick={() => deletarFornecedor(f.id)}
+                        className="action-icon"
+                        title="Excluir"
+                      />
+                    </div>
+                  )}
                 </li>
               )
             )}
-          {fornecedores.length === 0 && (
-            <EmptyState mensagem="Não encontrei nada... que pena!" />
-          )}
+          {fornecedores.length === 0 && <EmptyState mensagem="Não encontrei nada... que pena!" />}
         </ul>
       </div>
 
-      {/* Texto fora do quadro, abaixo da lista */}
       <p className="fornecedor-quantidade">
         Total de fornecedores exibidos: {fornecedores.length}
       </p>
