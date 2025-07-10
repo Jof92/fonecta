@@ -1,4 +1,4 @@
-/* Container principal com fundo em degradê animado baseado no logo FONECTA */
+/* Fundo com degradê animado */
 .app-container {
   height: 100vh;
   display: flex;
@@ -8,7 +8,7 @@
   animation: gradientMove 15s ease infinite;
 }
 
-/* Animação do fundo para efeito de movimento suave */
+/* Animação do fundo */
 @keyframes gradientMove {
   0% {
     background-position: 0% 50%;
@@ -21,7 +21,7 @@
   }
 }
 
-/* Cabeçalho fixo no topo com sombra leve */
+/* Cabeçalho fixo com logos */
 .app-header {
   padding: .5rem 2rem;
   border-bottom: 1px solid #ccc;
@@ -33,20 +33,17 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-/* Container do logo + título na esquerda do header */
 .header-left {
   display: flex;
   align-items: center;
-  gap: 0.5rem; /* espaço entre logo e texto */
+  gap: 0.5rem;
 }
 
-/* Logo Fonecta */
 .logo-fonecta {
   height: 36px;
   object-fit: contain;
 }
 
-/* Título FONECTA */
 .fonecta-title {
   font-size: 1.5rem;
   font-weight: bold;
@@ -58,47 +55,46 @@
   width: 60px;
   border-radius: 50%;
   object-fit: contain;
-  border: 3px solid #009DFF; /* borda azul forte do degradê */
+  border: 3px solid #009DFF;
   background-color: white;
   padding: 1px;
   box-sizing: border-box;
 }
 
-
-/* Conteúdo principal com layout em colunas */
+/* Área principal */
 .app-main {
   flex: 1;
   display: flex;
   justify-content: center;
-  align-items: stretch; /* forçar altura igual */
+  align-items: stretch;
   padding: 2rem;
   gap: 2rem;
-  overflow: hidden;
-  flex-wrap: nowrap; /* manter em linha */
+ overflow: hidden;
+  flex-wrap: nowrap;
 }
 
-/* Bloco do formulário (largura fixa) */
+/* Blocos flutuantes */
+.app-form-container,
+.app-list-container {
+  background-color: #ffffff;
+  border-radius: 1rem;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  padding: 1rem;
+  height: 520px;
+  
+}
+
+/* Formulário fixo */
 .app-form-container {
   flex: 0 0 320px;
-  max-height: 80vh;
-  background-color: #ffffff;
-  border-radius: 1rem;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-  padding: 0 1rem;
-
 }
 
-/* Bloco da lista (flexível) */
+/* Lista flexível */
 .app-list-container {
   flex: 1;
-  max-height: 80vh;
-  background-color: #ffffff;
-  border-radius: 1rem;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-  padding: 0 1rem;
 }
 
-/* Rodapé com fundo fixo branco */
+/* Rodapé fixo */
 .app-footer {
   flex: 0 0 40px;
   background-color: #ffffff;
@@ -108,7 +104,36 @@
   align-items: center;
   font-size: 0.9rem;
   color: #666;
+ 
 }
+.app-footer {
+  margin-top: 0 !important;
+}
+
+/* Títulos */
 h2 {
   margin: 0.5em;
+}
+
+/* Botões */
+button {
+  transition: background-color 0.2s ease;
+}
+
+button:hover {
+  background-color: #0052cc;
+}
+
+/* Responsividade para telas pequenas */
+@media (max-width: 768px) {
+  .app-main {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .app-form-container,
+  .app-list-container {
+    width: 100%;
+    max-height: none;
+  }
 }
