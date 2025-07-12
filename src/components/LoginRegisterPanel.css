@@ -1,0 +1,133 @@
+/* Container externo para login e cadastro lado a lado */
+.forms-container {
+  display: flex;
+  gap: 32px;
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 16px;
+  align-items: stretch; /* força altura igual */
+  justify-content: center;
+}
+
+/* Login/Cadastro painéis - largura fixa igual a fornecedor-form */
+.login-panel {
+  width: 400px;           /* Largura fixa igual ao fornecedor-form */
+  background: white;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  margin-left: 0;        /* Remove margem lateral para centralizar */
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  font-family: 'Arial', sans-serif;
+  box-sizing: border-box;
+}
+
+/* Títulos */
+.login-panel h3 {
+  margin-bottom: 8px;
+  color: #0066ff;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Labels */
+.login-panel label {
+  font-weight: 500;
+  margin-top: 0.5rem;
+  color: #444;
+  font-size: 0.85rem;
+}
+
+/* Inputs estilizados igual ao fornecedor-form */
+.login-panel input {
+  width: 100%;
+  padding: 6px 8px;               /* Igual fornecedor-form */
+  margin-top: 0;                  /* Remove margens verticais */
+  margin-bottom: 0.8rem;          /* Mantém espaçamento inferior */
+  border: none;
+  border-bottom: 1px solid #ccc; /* Borda só embaixo */
+  background: transparent;
+  transition: border-color 0.2s ease;
+  font-size: 1rem;
+  box-sizing: border-box;
+  border-radius: 0;               /* Sem arredondamento */
+}
+
+.login-panel input:focus {
+  outline: none;
+  border-bottom: 1px solid #007bff;
+}
+
+/* Botão enviar */
+.login-panel button[type='submit'] {
+  width: 100%;        /* Faz o botão ocupar toda a largura do container */
+  margin-top: 8px;
+  padding: 10px;
+  font-size: 1rem;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-weight: normal;
+}
+
+.login-panel button[type='submit']:hover {
+  background: #0056b3;
+}
+
+/* Botão alternar modo */
+.toggle-mode {
+  margin-top: 0.8rem;
+  background: none;
+  border: none;
+  color: #0066ff;
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: 0.9rem;
+}
+
+/* Mensagem de login */
+.login-msg {
+  margin-top: 1rem;
+  color: #333;
+  font-weight: 500;
+}
+.toggle-mode {
+  margin-top: 0.8rem;
+  background: none;
+  border: none;
+  color: #0066ff;
+  cursor: pointer;
+  text-decoration: none !important;
+  font-size: 0.9rem;
+  transition: color 0.2s ease;
+  outline: none !important;
+  box-shadow: none !important;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none; /* opcional, evita seleção visual ao clicar */
+}
+
+.toggle-mode:hover {
+  color: #004bb5;
+  text-decoration: none !important;
+}
+
+.toggle-mode:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  /* Remove o contorno no Firefox e Edge */
+  border: none !important;
+  outline-offset: 0 !important;
+}
+
+/* Se quiser, para o estado ativo também */
+.toggle-mode:active {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+

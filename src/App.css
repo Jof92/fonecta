@@ -7,6 +7,29 @@
   background-size: 400% 400%;
   animation: gradientMove 15s ease infinite;
 }
+.page-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 10rem; /* Espaço entre os blocos */
+ 
+}
+.qr-code-container {
+  width: 220px;
+  display: flex;
+  justify-content: center;    /* centraliza horizontalmente */
+  align-items: center;        /* centraliza verticalmente */
+  border-radius: 16px;        /* borda arredondada */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 12px;
+  background-color: white;    /* fundo para destacar */
+}
+.qr-code-container img {
+  border-radius: 12px;        /* borda arredondada na imagem também */
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
 
 /* Animação do fundo */
 @keyframes gradientMove {
@@ -104,7 +127,7 @@
   align-items: center;
   font-size: 0.9rem;
   color: #666;
- 
+
 }
 .app-footer {
   margin-top: 0 !important;

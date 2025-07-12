@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { supabase } from '../supabaseClient'
+import Toast from './Toast'
 import './FornecedorForm.css'
 
 export default function FornecedorForm() {
@@ -9,6 +10,9 @@ export default function FornecedorForm() {
   const [tags, setTags] = useState('')
   const [todasTags, setTodasTags] = useState([])
   const [sugestoes, setSugestoes] = useState([])
+
+  const [mensagem, setMensagem] = useState(null)
+  const [tipoMensagem, setTipoMensagem] = useState('sucesso')
 
   useEffect(() => {
     const carregarTags = async () => {
@@ -53,13 +57,19 @@ export default function FornecedorForm() {
     setSugestoes([])
   }
 
+  const exibirMensagem = (texto, tipo = 'sucesso') => {
+    setMensagem(texto)
+    setTipoMensagem(tipo)
+    setTimeout(() => setMensagem(null), 3000)
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
 
     const numeroLimpo = whatsapp.replace(/\D/g, '')
 
     if (!/^\d{10,11}$/.test(numeroLimpo)) {
-      alert('Número de WhatsApp inválido. Use o formato: 85996204919')
+      exibirMensagem('Número de WhatsApp inválido. Use o formato: 85996204919', 'erro')
       return
     }
 
@@ -73,12 +83,12 @@ export default function FornecedorForm() {
       .eq('whatsapp', whatsappFormatado)
 
     if (errorConsulta) {
-      alert('Erro ao verificar duplicidade: ' + errorConsulta.message)
+      exibirMensagem('Erro ao verificar duplicidade: ' + errorConsulta.message, 'erro')
       return
     }
 
     if (existentes.length > 0) {
-      alert('Este número de WhatsApp já está cadastrado.')
+      exibirMensagem('Este número de WhatsApp já está cadastrado.', 'erro')
       return
     }
 
@@ -97,9 +107,9 @@ export default function FornecedorForm() {
     ])
 
     if (error) {
-      alert('Erro ao cadastrar: ' + error.message)
+      exibirMensagem('Erro ao cadastrar: ' + error.message, 'erro')
     } else {
-      alert('Fornecedor cadastrado com sucesso!')
+      exibirMensagem('Fornecedor cadastrado com sucesso!', 'sucesso')
       setNome('')
       setEmpresa('')
       setWhatsapp('')
@@ -109,64 +119,74 @@ export default function FornecedorForm() {
   }
 
   return (
-    <form className="fornecedor-form" onSubmit={handleSubmit}>
-      <h2 className="form-title">Cadastrar Fornecedor</h2>
+    <>
+      {mensagem && (
+        <Toast
+          mensagem={mensagem}
+          tipo={tipoMensagem}
+          onClose={() => setMensagem(null)}
+        />
+      )}
 
-      <label className="form-label">Nome:</label>
-      <input
-        className="form-input"
-        type="text"
-        value={nome}
-        onChange={(e) => setNome(e.target.value)}
-        required
-      />
+      <form className="fornecedor-form" onSubmit={handleSubmit}>
+        <h2 className="form-title">Cadastrar Fornecedor</h2>
 
-      <label className="form-label">Empresa:</label>
-      <input
-        className="form-input"
-        type="text"
-        value={empresa}
-        onChange={(e) => setEmpresa(e.target.value)}
-        required
-      />
-
-      <label className="form-label">WhatsApp:</label>
-      <input
-        className="form-input"
-        type="text"
-        value={whatsapp}
-        onChange={(e) => setWhatsapp(e.target.value)}
-        placeholder="DDD + Telefone"
-        required
-      />
-
-      <label className="form-label">Hashtags:</label>
-      <div style={{ position: 'relative' }}>
+        <label className="form-label">Nome:</label>
         <input
           className="form-input"
           type="text"
-          value={tags}
-          onChange={handleTagsChange}
-          placeholder="#tag1 #tag2"
+          value={nome}
+          onChange={(e) => setNome(e.target.value)}
+          required
         />
-        {sugestoes.length > 0 && (
-          <ul className="tag-sugestoes">
-            {sugestoes.map((sug, idx) => (
-              <li
-                key={idx}
-                className="tag-sugestao"
-                onClick={() => handleSugestaoClick(sug)}
-              >
-                {sug}
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
 
-      <button className="form-button" type="submit">
-        Cadastrar
-      </button>
-    </form>
+        <label className="form-label">Empresa:</label>
+        <input
+          className="form-input"
+          type="text"
+          value={empresa}
+          onChange={(e) => setEmpresa(e.target.value)}
+          required
+        />
+
+        <label className="form-label">WhatsApp:</label>
+        <input
+          className="form-input"
+          type="text"
+          value={whatsapp}
+          onChange={(e) => setWhatsapp(e.target.value)}
+          placeholder="DDD + Telefone"
+          required
+        />
+
+        <label className="form-label">Hashtags:</label>
+        <div style={{ position: 'relative' }}>
+          <input
+            className="form-input"
+            type="text"
+            value={tags}
+            onChange={handleTagsChange}
+            placeholder="#tag1 #tag2"
+          />
+          {sugestoes.length > 0 && (
+            <ul className="tag-sugestoes">
+              {sugestoes.map((sug, idx) => (
+                <li
+                  key={idx}
+                  className="tag-sugestao"
+                  onClick={() => handleSugestaoClick(sug)}
+                >
+                  {sug}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        <button className="form-button" type="submit">
+          Cadastrar
+        </button>
+      </form>
+    </>
   )
 }

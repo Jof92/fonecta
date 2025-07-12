@@ -1,17 +1,24 @@
-import React from 'react'
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+  useNavigate,
+} from 'react-router-dom'
 import FornecedorForm from './components/FornecedorForm'
 import FornecedorList from './components/FornecedorList'
+import LoginRegisterPanel from './components/LoginRegisterPanel'
 import Footer from './components/Footer'
+import LoadingSpinner from './components/LoadingSpinner'
 import logoParceira from './assets/parceira.png'
 import logoFonecta from './assets/fonect.png'
+import qrCode from './assets/qrcode.png'
 import './App.css'
 
-// Cabeçalho com logos ou botão de login
-function Header() {
+function Header({ mostrarLogin, setMostrarLogin }) {
   const location = useLocation()
-  const navigate = useNavigate()
-
   const estaNaPaginaDeCadastro = location.pathname === '/cadastro'
 
   return (
@@ -24,7 +31,7 @@ function Header() {
       <div className="header-right">
         {estaNaPaginaDeCadastro ? (
           <button
-            onClick={() => navigate('/admin')}
+            onClick={() => setMostrarLogin(prev => !prev)}
             style={{
               padding: '0.4rem 1rem',
               borderRadius: '6px',
@@ -33,10 +40,10 @@ function Header() {
               color: '#fff',
               fontWeight: 'bold',
               cursor: 'pointer',
-              fontSize: '0.9rem'
+              fontSize: '0.9rem',
             }}
           >
-            Login
+            {mostrarLogin ? 'Fechar Login' : 'Login'}
           </button>
         ) : (
           <img src={logoParceira} alt="Logo Parceira" className="logo-parceira" />
@@ -46,16 +53,41 @@ function Header() {
   )
 }
 
-// Página de cadastro público
-function CadastroPage() {
+function CadastroPage({ mostrarLogin, setMostrarLogin }) {
   return (
-    <div className="app-form-container bloco-flutuante">
-      <FornecedorForm />
+    <div className="page-container">
+      <div className="app-form-container bloco-flutuante">
+        <FornecedorForm />
+      </div>
+
+      <div className="login-container bloco-flutuante">
+        {mostrarLogin ? (
+          <LoginRegisterPanel
+            onLoginSuccess={() => {
+              setMostrarLogin(false)
+            }}
+          />
+        ) : (
+          <div style={{ textAlign: 'center' }}>
+            <img
+              src={qrCode}
+              alt="QR Code para cadastro"
+              style={{
+                width: '300px',
+                borderRadius: '12px',
+                boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+              }}
+            />
+            <p style={{ marginTop: '0.5rem', fontWeight: 'bold' }}>
+              Aponte a câmera para se cadastrar
+            </p>
+          </div>
+        )}
+      </div>
     </div>
   )
 }
 
-// Página completa (admin) com cadastro e lista
 function AdminPage() {
   return (
     <>
@@ -69,24 +101,57 @@ function AdminPage() {
   )
 }
 
-// App principal com rotas
+function AppContent() {
+  const [mostrarLogin, setMostrarLogin] = useState(false)
+  const [carregando, setCarregando] = useState(false)
+  const location = useLocation()
+
+  useEffect(() => {
+    setCarregando(true)
+    const timer = setTimeout(() => setCarregando(false), 500)
+    return () => clearTimeout(timer)
+  }, [location])
+
+  return (
+    <>
+      {carregando && <LoadingSpinner />}
+
+      <Header mostrarLogin={mostrarLogin} setMostrarLogin={setMostrarLogin} />
+
+      <main className="app-main">
+        <Routes>
+          <Route
+            path="/cadastro"
+            element={
+              <CadastroPage
+                mostrarLogin={mostrarLogin}
+                setMostrarLogin={setMostrarLogin}
+              />
+            }
+          />
+          <Route path="/admin" element={<AdminPage />} />
+          <Route path="/" element={<Navigate to="/cadastro" replace />} />
+          <Route
+            path="*"
+            element={
+              <h2 style={{ color: 'white', textAlign: 'center' }}>
+                Página não encontrada
+              </h2>
+            }
+          />
+        </Routes>
+      </main>
+
+      <Footer />
+    </>
+  )
+}
+
 function App() {
   return (
     <Router>
       <div className="app-container">
-        <Header />
-        <main className="app-main">
-          <Routes>
-            <Route path="/cadastro" element={<CadastroPage />} />
-            <Route path="/admin" element={<AdminPage />} />
-            <Route path="/" element={<Navigate to="/cadastro" replace />} />
-            <Route
-              path="*"
-              element={<h2 style={{ color: 'white', textAlign: 'center' }}>Página não encontrada</h2>}
-            />
-          </Routes>
-        </main>
-        <Footer />
+        <AppContent />
       </div>
     </Router>
   )
