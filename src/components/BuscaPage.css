@@ -1,0 +1,39 @@
+.fornecedor-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  background-color: white;
+  transition: background-color 0.3s ease;
+}
+
+
+.fornecedor-item.marcado {
+  background-color: #ffe5e5;
+  border-color: #ff4d4d;
+}
+
+.checkbox-problema {
+  margin-left: 10px;
+  font-size: 1.3rem;
+  cursor: pointer;
+  color: #999;
+  user-select: none;
+}
+
+.checkbox-problema.checked {
+  color: red;
+  font-weight: bold;
+}
+
+.marcado-alerta {
+  color: red;
+  font-size: 0.8rem;
+  margin-top: 5px;
+  font-weight: bold;
+}
+
+

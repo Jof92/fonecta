@@ -3,7 +3,7 @@ import { supabase } from '../supabaseClient'
 import Toast from './Toast'
 import './FornecedorForm.css'
 
-export default function FornecedorForm() {
+export default function FornecedorForm({ mostrarTitulo = true }) {
   const [nome, setNome] = useState('')
   const [empresa, setEmpresa] = useState('')
   const [whatsapp, setWhatsapp] = useState('')
@@ -17,17 +17,15 @@ export default function FornecedorForm() {
   useEffect(() => {
     const carregarTags = async () => {
       const { data, error } = await supabase.from('fornecedores').select('tags')
-
       if (error) {
         console.error('Erro ao buscar tags:', error)
         return
       }
 
       const tagsUnicas = new Set()
-      data.forEach((f) => {
-        f.tags?.forEach((tag) => tagsUnicas.add(tag.toLowerCase()))
+      data.forEach(f => {
+        f.tags?.forEach(tag => tagsUnicas.add(tag.toLowerCase()))
       })
-
       setTodasTags(Array.from(tagsUnicas))
     }
 
@@ -43,7 +41,9 @@ export default function FornecedorForm() {
 
     if (ultima.length >= 4 && ultima.startsWith('#')) {
       const termo = ultima.toLowerCase()
-      const filtradas = todasTags.filter((tag) => tag.startsWith(termo) && tag !== termo)
+      const filtradas = todasTags.filter(
+        tag => tag.startsWith(termo) && tag !== termo
+      )
       setSugestoes(filtradas.slice(0, 5))
     } else {
       setSugestoes([])
@@ -67,7 +67,6 @@ export default function FornecedorForm() {
     e.preventDefault()
 
     const numeroLimpo = whatsapp.replace(/\D/g, '')
-
     if (!/^\d{10,11}$/.test(numeroLimpo)) {
       exibirMensagem('Número de WhatsApp inválido. Use o formato: 85996204919', 'erro')
       return
@@ -77,13 +76,13 @@ export default function FornecedorForm() {
     const numero = numeroLimpo.slice(2)
     const whatsappFormatado = `(${ddd}) ${numero}`
 
-    const { data: existentes, error: errorConsulta } = await supabase
+    const { data: existentes, error: erroConsulta } = await supabase
       .from('fornecedores')
       .select('id')
       .eq('whatsapp', whatsappFormatado)
 
-    if (errorConsulta) {
-      exibirMensagem('Erro ao verificar duplicidade: ' + errorConsulta.message, 'erro')
+    if (erroConsulta) {
+      exibirMensagem('Erro ao verificar duplicidade: ' + erroConsulta.message, 'erro')
       return
     }
 
@@ -94,22 +93,20 @@ export default function FornecedorForm() {
 
     const tagsArray = tags
       .split(/[\s,]+/)
-      .filter((tag) => tag.startsWith('#'))
-      .map((tag) => tag.toLowerCase())
+      .filter(tag => tag.startsWith('#'))
+      .map(tag => tag.toLowerCase())
 
-    const { error } = await supabase.from('fornecedores').insert([
-      {
-        nome,
-        empresa,
-        whatsapp: whatsappFormatado,
-        tags: tagsArray,
-      },
-    ])
+    const { error } = await supabase.from('fornecedores').insert([{
+      nome,
+      empresa,
+      whatsapp: whatsappFormatado,
+      tags: tagsArray,
+    }])
 
     if (error) {
       exibirMensagem('Erro ao cadastrar: ' + error.message, 'erro')
     } else {
-      exibirMensagem('Fornecedor cadastrado com sucesso!', 'sucesso')
+      exibirMensagem('Fornecedor cadastrado com sucesso!')
       setNome('')
       setEmpresa('')
       setWhatsapp('')
@@ -129,7 +126,7 @@ export default function FornecedorForm() {
       )}
 
       <form className="fornecedor-form" onSubmit={handleSubmit}>
-        <h2 className="form-title">Cadastrar Fornecedor</h2>
+        {mostrarTitulo && <h2 className="form-title">Cadastrar Fornecedor</h2>}
 
         <label className="form-label">Nome:</label>
         <input

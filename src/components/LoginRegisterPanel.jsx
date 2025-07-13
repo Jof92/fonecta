@@ -13,7 +13,7 @@ export default function LoginRegisterPanel({ onLoginSuccess }) {
     nome: '',
     empresa: '',
     setor: '',
-    codigo: '',
+    codigo: '', // aqui continua o campo código para o usuário digitar
   })
   const [mensagem, setMensagem] = useState(null)
 
@@ -26,17 +26,39 @@ export default function LoginRegisterPanel({ onLoginSuccess }) {
     e.preventDefault()
     setMensagem(null)
 
-    const { error, data } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email: form.email,
       password: form.senha,
     })
 
     if (error) {
       setMensagem('Erro no login: ' + error.message)
+      return
+    }
+
+    // Buscar o perfil do usuário logado (coluna 'perfil' na tabela profiles)
+    const userId = data.user.id
+    const { data: perfilData, error: perfilError } = await supabase
+      .from('profiles')
+      .select('perfil')
+      .eq('id', userId)
+      .single()
+
+    if (perfilError) {
+      setMensagem('Erro ao buscar perfil: ' + perfilError.message)
+      return
+    }
+
+    setMensagem('Login bem-sucedido!')
+    onLoginSuccess?.(data.user) // Fecha painel
+
+    // Redireciona conforme o perfil
+    if (perfilData.perfil === 'admin') {
+      navigate('/admin')
+    } else if (perfilData.perfil === 'buscador') {
+      navigate('/busca')
     } else {
-      setMensagem('Login bem-sucedido!')
-      onLoginSuccess?.(data.user) // Fecha painel
-      navigate('/admin') // Redireciona
+      setMensagem('Perfil inválido no cadastro.')
     }
   }
 
@@ -44,6 +66,7 @@ export default function LoginRegisterPanel({ onLoginSuccess }) {
     e.preventDefault()
     setMensagem(null)
 
+    // Transforma o código em perfil
     const perfil =
       form.codigo === 'admin123' ? 'admin' :
       form.codigo === 'buscador123' ? 'buscador' :
@@ -64,13 +87,14 @@ export default function LoginRegisterPanel({ onLoginSuccess }) {
       return
     }
 
+    // Salva as informações extras no perfil, incluindo o perfil
     const { error: errorProfile } = await supabase.from('profiles').insert([
       {
         id: data.user.id,
         nome: form.nome,
         empresa: form.empresa,
         setor: form.setor,
-        perfil,
+        perfil,  // salva o perfil e não o código
       },
     ])
 
