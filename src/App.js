@@ -6,6 +6,7 @@ import {
   Navigate,
   useLocation,
 } from 'react-router-dom'
+import { FaSignInAlt } from 'react-icons/fa'
 import FornecedorForm from './components/FornecedorForm'
 import FornecedorList from './components/FornecedorList'
 import LoginRegisterPanel from './components/LoginRegisterPanel'
@@ -17,25 +18,23 @@ import qrCode from './assets/qrcode.png'
 import './App.css'
 import BuscaPage from './components/BuscaPage'
 
-// Página de cadastro com formulário, login e frase à esquerda
 function CadastroPage({ mostrarLogin, setMostrarLogin }) {
   return (
     <div className="page-container" style={{ alignItems: 'flex-start' }}>
-      {/* Frase fixa no lado esquerdo */}
       <div
         style={{
-           flex: '0 0 220px',
+          flex: '0 0 220px',
           display: 'flex',
-          alignItems: 'center',   // centraliza verticalmente
+          alignItems: 'center',
           paddingLeft: '1rem',
-          color: '#000000',
+          color: '#000',
           fontWeight: '600',
           fontSize: '1.2rem',
           whiteSpace: 'normal',
           lineHeight: '1.4',
           userSelect: 'none',
           marginRight: '2rem',
-          height: '520px',    
+          height: '520px',
         }}
       >
         <div>
@@ -72,7 +71,6 @@ function CadastroPage({ mostrarLogin, setMostrarLogin }) {
   )
 }
 
-// Página Admin com formulário e lista
 function AdminPage() {
   return (
     <>
@@ -86,7 +84,6 @@ function AdminPage() {
   )
 }
 
-// Cabeçalho com menu e botão login apenas na página de cadastro
 function Header({ mostrarLogin, setMostrarLogin }) {
   const location = useLocation()
   const estaNaPaginaDeCadastro = location.pathname === '/cadastro'
@@ -102,18 +99,12 @@ function Header({ mostrarLogin, setMostrarLogin }) {
         {estaNaPaginaDeCadastro ? (
           <button
             onClick={() => setMostrarLogin((prev) => !prev)}
-            style={{
-              padding: '0.4rem 1rem',
-              borderRadius: '6px',
-              border: 'none',
-              backgroundColor: '#0066ff',
-              color: '#fff',
-              fontWeight: 'bold',
-              cursor: 'pointer',
-              fontSize: '0.9rem',
-            }}
+            className="login-button"
           >
-            {mostrarLogin ? 'Fechar Login' : 'Login'}
+            <span className="login-text">
+              {mostrarLogin ? 'Fechar Login' : 'Login'}
+            </span>
+            <FaSignInAlt className="login-icon" />
           </button>
         ) : (
           <img src={logoParceira} alt="Logo Parceira" className="logo-parceira" />
@@ -123,11 +114,19 @@ function Header({ mostrarLogin, setMostrarLogin }) {
   )
 }
 
-// Conteúdo principal do app, com roteamento e loading
 function AppContent() {
   const [mostrarLogin, setMostrarLogin] = useState(false)
   const [carregando, setCarregando] = useState(false)
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
   const location = useLocation()
+
+  useEffect(() => {
+    function handleResize() {
+      setIsMobile(window.innerWidth < 768)
+    }
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   useEffect(() => {
     setCarregando(true)
@@ -135,11 +134,20 @@ function AppContent() {
     return () => clearTimeout(timer)
   }, [location])
 
+  function fecharLogin() {
+    setMostrarLogin(false)
+  }
+
   return (
     <>
       {carregando && <LoadingSpinner />}
 
       <Header mostrarLogin={mostrarLogin} setMostrarLogin={setMostrarLogin} />
+
+      {/* Overlay que aparece só no mobile quando login está aberto */}
+      {mostrarLogin && isMobile && (
+        <div className="login-overlay" onClick={fecharLogin}></div>
+      )}
 
       <main className="app-main">
         <Routes>
@@ -171,7 +179,6 @@ function AppContent() {
   )
 }
 
-// Componente principal que envolve tudo em Router
 function App() {
   return (
     <Router>
