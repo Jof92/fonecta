@@ -1,5 +1,3 @@
-
-
 /* Fundo com degradê animado */
 .app-container {
   height: 100vh;
@@ -8,6 +6,7 @@
   background: linear-gradient(135deg, #009DFF, #00B8D9, #00C48C);
   background-size: 400% 400%;
   animation: gradientMove 15s ease infinite;
+  overflow: auto;
 }
 
 /* Página principal */
@@ -15,28 +14,7 @@
   display: flex;
   align-items: flex-start;
   gap: 10rem;
-  position: relative; /* para o overlay ficar relativo aqui */
-}
-
-/* QR Code */
-.qr-code-container {
-  width: 220px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  padding: 12px;
-  background-color: white;
   position: relative;
-  z-index: 1;
-}
-
-.qr-code-container img {
-  border-radius: 12px;
-  max-width: 100%;
-  height: auto;
-  display: block;
 }
 
 /* Animação do fundo */
@@ -112,7 +90,7 @@
   display: flex;
   justify-content: center;
   align-items: stretch;
-  padding: 2rem;
+  padding: 0 2rem;
   gap: 2rem;
   overflow: auto;
   flex-wrap: nowrap;
@@ -126,7 +104,6 @@
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
   padding: 1rem;
   height: 520px;
-  
 }
 
 .app-form-container {
@@ -198,7 +175,6 @@ button:hover {
   padding: 1rem;
   max-width: 320px;
   z-index: 110;
-
   /* Aplica animação suave nos filhos */
 }
 
@@ -208,19 +184,23 @@ button:hover {
 
 /* Overlay e login no responsivo */
 @media (max-width: 768px) {
+  /* Ajusta container para scroll natural */
+  .app-container {
+    height: auto !important;
+    overflow: visible !important;
+  }
+
   .app-main,
   .page-container {
     flex-direction: column !important;
     align-items: center !important;
-    padding: 1rem;
     gap: 1.2rem;
     overflow-x: auto;
   }
 
   .app-form-container,
   .app-list-container,
-  .login-container,
-  .qr-code-container {
+  .login-container {
     width: 100% !important;
     max-width: 100%;
     height: auto;
@@ -229,11 +209,6 @@ button:hover {
 
   .app-form-container {
     flex: none;
-  }
-
-  .qr-code-container img {
-    width: 100%;
-    height: auto;
   }
 
   .fonecta-title {
@@ -305,4 +280,69 @@ button:hover {
     width: 90%;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
   }
+}
+
+/* ======================= */
+/* CARROSSEL (imagem + texto lado a lado) */
+/* ======================= */
+/* Container do carrossel: flex, alinhamento, espaçamento */
+.carousel-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 2rem;
+  max-width: 90vw;
+  /* Transição para a opacidade suave */
+  transition: opacity 1.5s ease-in-out;
+}
+
+/* Imagem: ocupa mais espaço e tem borda arredondada */
+.carousel-image {
+  width: 45vw;
+  max-width: 600px;
+  height: auto;
+  border-radius: 12px;
+  flex-shrink: 0;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Texto: tamanho grande, legível, max width para evitar esticar */
+.carousel-text {
+  font-size: 2rem;
+  font-weight: 600;
+  max-width: 40vw;
+  color: #111;
+  line-height: 1.4;
+  margin: 0;
+  user-select: none;
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 768px) {
+  .carousel-container {
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .carousel-image {
+    width: 90vw;
+    max-width: none;
+  }
+
+  .carousel-text {
+    max-width: 90vw;
+    font-size: 1.5rem;
+    text-align: center;
+  }
+}
+
+/* Global reset for html and body scroll */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
 }

@@ -1,39 +1,50 @@
-.fornecedor-item {
+.cadastro-fornecedor-body {
+  position: relative;
+  padding: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+  border-radius: 12px;
+}
+
+.logo-empresa-canto {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  width: 80px;
+  height: 80px;
+}
+
+.logo-empresa-canto .logo-empresa {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.mensagem-cadastro {
+  margin-top: 4.5rem; /* para dar espaço para logo */
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #222;
+}
+
+.form-qr-container {
   display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  margin-bottom: 10px;
-  background-color: white;
-  transition: background-color 0.3s ease;
+  gap: 2rem;
+  margin-top: 2rem;
 }
 
-
-.fornecedor-item.marcado {
-  background-color: #ffe5e5;
-  border-color: #ff4d4d;
+.form-qr-container > * {
+  flex: 1;
 }
 
-.checkbox-problema {
-  margin-left: 10px;
-  font-size: 1.3rem;
-  cursor: pointer;
-  color: #999;
-  user-select: none;
+.qr-code-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.checkbox-problema.checked {
-  color: red;
-  font-weight: bold;
+.qr-code-img {
+  width: 300px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
-
-.marcado-alerta {
-  color: red;
-  font-size: 0.8rem;
-  margin-top: 5px;
-  font-weight: bold;
-}
-
-

@@ -68,7 +68,7 @@ export default function FornecedorForm({ mostrarTitulo = true }) {
 
     const numeroLimpo = whatsapp.replace(/\D/g, '')
     if (!/^\d{10,11}$/.test(numeroLimpo)) {
-      exibirMensagem('Número de WhatsApp inválido. Use o formato: 85996204919', 'erro')
+      exibirMensagem('Número de WhatsApp inválido. Use o formato: xx xxxxx xxxx', 'erro')
       return
     }
 
@@ -163,7 +163,7 @@ export default function FornecedorForm({ mostrarTitulo = true }) {
             type="text"
             value={tags}
             onChange={handleTagsChange}
-            placeholder="#tag1 #tag2"
+            placeholder="Ex.: #cimento #areia"
           />
           {sugestoes.length > 0 && (
             <ul className="tag-sugestoes">

@@ -1,0 +1,122 @@
+.cadastro-fornecedor-body {
+  width: 100%;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #111;
+  box-sizing: border-box;
+}
+
+/* Linha 1: logo + mensagem */
+.topo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+.form-qr-container {
+    margin-top: 1rem;
+}
+
+.logo-box {
+  width: 100px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logo-empresa {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.mensagem-box {
+  max-width: 500px;
+}
+
+.mensagem-cadastro {
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-align: left;
+  margin: 0;
+}
+
+/* Linha 2: formulário + QR */
+
+.qr-code-container {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 0 2rem;
+  border-radius: 12px;
+  flex-wrap: wrap;
+}
+
+.form-wrapper {
+  flex: 1;
+  max-width: 500px;
+   display: flex;
+  gap: 2rem;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 0 2rem;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  max-width: 900px;
+  width: 100%;
+  flex-wrap: wrap;
+  
+}
+
+.qr-code-img {
+  width: 180px;
+  height: 180px;
+  object-fit: contain;
+  border-radius: 12px;
+}
+/* Responsivo */
+@media (max-width: 768px) {
+
+
+  .topo-container {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .form-qr-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1rem;
+  }
+
+  .form-wrapper {
+    width: 100%;
+    max-width: 100%;
+    padding: 0;
+  }
+
+  .qr-wrapper {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .qr-code-img {
+    width: 160px;
+    height: auto;
+  }
+}
+
+

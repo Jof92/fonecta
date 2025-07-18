@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { supabase } from '../supabaseClient'
-import { FaEdit, FaTrash, FaCopy } from 'react-icons/fa'
+import { FaEdit, FaTrash, FaCopy, FaMobileAlt, FaTags } from 'react-icons/fa'
+import { VscVerified } from 'react-icons/vsc'
 import './FornecedorList.css'
 import EmptyState from './EmptyState'
 
@@ -260,13 +261,20 @@ export default function FornecedorList() {
             <FaCopy
               title="Copiar selecionados"
               onClick={copiarSelecionados}
-              style={{ cursor: selecionados.size > 0 ? 'pointer' : 'not-allowed', marginRight: '1rem', color: selecionados.size > 0 ? '#007bff' : '#aaa' }}
+              style={{
+                cursor: selecionados.size > 0 ? 'pointer' : 'not-allowed',
+                marginRight: '1rem',
+                color: selecionados.size > 0 ? '#007bff' : '#aaa'
+              }}
               size={20}
             />
             <FaTrash
               title="Deletar selecionados"
               onClick={deletarSelecionados}
-              style={{ cursor: selecionados.size > 0 ? 'pointer' : 'not-allowed', color: selecionados.size > 0 ? '#dc3545' : '#aaa' }}
+              style={{
+                cursor: selecionados.size > 0 ? 'pointer' : 'not-allowed',
+                color: selecionados.size > 0 ? '#dc3545' : '#aaa'
+              }}
               size={20}
             />
           </>
@@ -326,18 +334,37 @@ export default function FornecedorList() {
                     />
                   )}
                   <div className="fornecedor-info" style={{ flex: 1 }}>
-                    <strong>{f.nome}</strong> — {f.empresa} <br />
-                    📱{' '}
+                    <strong>
+                      {f.nome}{' '}
+                      {Array.isArray(f.tags) &&
+                        f.tags.some(tag => tag.toLowerCase() === '#coopercon') && (
+                          <VscVerified
+                            title="Coopercon"
+                            color="#28a745"
+                            size={16}
+                            style={{ marginLeft: 4, verticalAlign: 'middle' }}
+                          />
+                        )}
+                    </strong>
+                    <br />
+                    {f.empresa}
+                    <br />
+                    <FaMobileAlt
+                      style={{ marginRight: 6, verticalAlign: 'middle', color: '#B197FC' }}
+                    />
                     <a
                       href={`https://wa.me/${f.whatsapp.replace(/\D/g, '')}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="fornecedor-whatsapp-link"
+                      style={{ color: '#196F3D' }}
                     >
                       {f.whatsapp}
-                    </a>{' '}
+                    </a>
                     <br />
-                    🏷️{' '}
+                    <FaTags
+                      style={{ marginRight: 6, verticalAlign: 'middle', color: '#B197FC' }}
+                    />
                     {f.tags?.map((tag) => (
                       <button
                         key={tag}
