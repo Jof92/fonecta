@@ -19,6 +19,8 @@
 }
 .form-qr-container {
     margin-top: 1rem;
+    display: flex;
+  gap: 2rem;
 }
 
 .logo-box {
@@ -83,9 +85,10 @@
   object-fit: contain;
   border-radius: 12px;
 }
+
+
 /* Responsivo */
 @media (max-width: 768px) {
-
 
   .topo-container {
     flex-direction: column;
@@ -118,5 +121,8 @@
     height: auto;
   }
 }
+
+
+
 
 

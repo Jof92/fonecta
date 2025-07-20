@@ -1,33 +1,36 @@
-import React from 'react'
-import FornecedorForm from './FornecedorForm'
-import qrCode from '../assets/qrcode.png'
-import logoParceira from '../assets/parceira.png'
-import './CadastroExterno.css'
+import React from 'react';
+import FornecedorForm from './FornecedorForm';
+import qrCode from '../assets/qrcode1.png';
+import logoParceira from '../assets/parceira.png';
+import './CadastroExterno.css';
 
 export default function CadastroFornecedor() {
   return (
     <div className="cadastro-fornecedor-body">
-
-      {/* Linha 1: Logo + Frase */}
+      
+      {/* Topo: Logo + Mensagem */}
       <div className="topo-container">
         <div className="logo-box">
-          <img src={logoParceira} alt="Logo da Empresa" className="logo-empresa" />
+          <img
+            src={logoParceira}
+            alt="Logo da Empresa"
+            className="logo-empresa"
+          />
         </div>
-
         <div className="mensagem-box">
           <p className="mensagem-cadastro">
-            Quer fazer parte do nosso time de fornecedores?<br />
+            Quer fazer parte do nosso time de fornecedores?
+            <br />
             <strong>Cadastre-se aqui.</strong>
           </p>
         </div>
       </div>
 
-      {/* Linha 2: Formulário + QR Code */}
+      {/* Meio: Formulário + QR Code */}
       <div className="form-qr-container">
         <div className="form-wrapper">
           <FornecedorForm mostrarTitulo={false} />
         </div>
-
         <div className="qr-wrapper">
           <img
             src={qrCode}
@@ -36,7 +39,7 @@ export default function CadastroFornecedor() {
           />
         </div>
       </div>
-
+      
     </div>
-  )
+  );
 }

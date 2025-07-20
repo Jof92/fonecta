@@ -19,9 +19,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
   border-bottom: 1px solid #ccc;
-  padding-bottom: 8px;
+  padding: 8px;
 }
 
 .fornecedor-item.editando {
@@ -289,15 +288,6 @@
   color: #aaa !important;
 }
 
-/* Itens da lista com checkbox e botão na mesma linha */
-.fornecedor-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 8px;
-  padding-bottom: 6px;
-  border-bottom: 1px solid #ccc;
-}
 
 /* Checkbox menor com margem */
 .fornecedor-item input[type="checkbox"] {

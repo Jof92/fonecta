@@ -1,49 +1,61 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   useLocation,
-  useNavigate,
-} from 'react-router-dom'
+} from 'react-router-dom';
 
-import { FaSignInAlt } from 'react-icons/fa'
+import Header from './components/Header';
+import Footer from './components/Footer';
+import LoginRegisterPanel from './components/LoginRegisterPanel';
+import LoadingSpinner from './components/LoadingSpinner';
+import BuscaPage from './components/BuscaPage';
+import CadastroFornecedor from './components/CadastroExterno';
+import AdminPage from './components/AdminPage';
+import Cnpj from './components/Cnpj';
 
-import FornecedorForm from './components/FornecedorForm'
-import FornecedorList from './components/FornecedorList'
-import LoginRegisterPanel from './components/LoginRegisterPanel'
-import Footer from './components/Footer'
-import LoadingSpinner from './components/LoadingSpinner'
-import BuscaPage from './components/BuscaPage'
-import CadastroFornecedor from './components/CadastroExterno'
+import secreImg from './assets/secre.png';
+import caixaImg from './assets/caixa.png';
+import maoImg from './assets/mao.png';
+import empiImg from './assets/empi.png';
 
-import logoParceira from './assets/parceira.png'
-import logoFonecta from './assets/fonect.png'
-import secreImg from './assets/secre.png'
-import caixaImg from './assets/caixa.png'
-
-import './App.css'
+import './App.css';
 
 function CadastroPage() {
-  const imagens = [secreImg, caixaImg]
+  const imagens = [secreImg, maoImg, caixaImg, empiImg];
   const frases = [
     <span><strong>Aqui</strong> seus fornecedores se encontram</span>,
+    <span>Seu <strong>Projeto</strong> começa com boas conexões</span>,
     <span><strong>Aqui</strong> todos os seus fornecedores estão reunidos</span>,
-  ]
+    <span>Mais <strong>Agilidade</strong> para encontrar quem resolve</span>,
+  ];
 
-  const [index, setIndex] = useState(0)
-  const [fade, setFade] = useState(true)
+  const [index, setIndex] = useState(0);
+  const [fade, setFade] = useState(true);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setFade(false)
-      setTimeout(() => {
-        setIndex((prev) => (prev + 1) % frases.length)
-        setFade(true)
-      }, 1000)
-    }, 10000)
-    return () => clearInterval(interval)
-  }, [])
+    let timeoutFadeOut;
+    let timeoutFadeIn;
+
+    function nextSlide() {
+      timeoutFadeOut = setTimeout(() => {
+        setFade(false);
+        timeoutFadeIn = setTimeout(() => {
+          setIndex((prev) => (prev + 1) % frases.length);
+          setFade(true);
+          nextSlide();
+        }, 1000);
+      }, 9000);
+    }
+
+    nextSlide();
+
+    return () => {
+      clearTimeout(timeoutFadeOut);
+      clearTimeout(timeoutFadeIn);
+    };
+  }, [frases.length]);
 
   return (
     <div className="page-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -84,115 +96,64 @@ function CadastroPage() {
         </p>
       </div>
     </div>
-  )
-}
-
-function AdminPage() {
-  const navigate = useNavigate()
-
-  return (
-    <>
-      <div style={{ marginBottom: '1rem' }}>
-        <button
-          onClick={() => navigate('/cadastro-externo')}
-          style={{
-            padding: '0.5rem 1rem',
-            fontSize: '1rem',
-            cursor: 'pointer',
-          }}
-        >
-          Abrir Cadastro Externo
-        </button>
-      </div>
-
-      <div className="app-form-container bloco-flutuante">
-        <FornecedorForm />
-      </div>
-
-      <div className="app-list-container bloco-flutuante">
-        <FornecedorList />
-      </div>
-    </>
-  )
-}
-
-function Header({ mostrarLogin, setMostrarLogin }) {
-  const location = useLocation()
-  const pathname = location.pathname
-
-  const estaNaHome = pathname === '/'
-  const estaNoCadastroExterno = pathname === '/cadastro-externo'
-
-  return (
-    <header className="app-header" style={{ position: 'relative', zIndex: 10 }}>
-      <div className="header-left">
-        <img src={logoFonecta} alt="Logo Fonecta" className="logo-fonecta" />
-        <h1 className="fonecta-title">FONECTA</h1>
-      </div>
-
-      {!estaNoCadastroExterno && (
-        <div className="header-right">
-          {estaNaHome ? (
-            <button
-              onClick={() => setMostrarLogin((prev) => !prev)}
-              className="login-button"
-            >
-              <span className="login-text">
-                {mostrarLogin ? 'Fechar Login' : 'Login'}
-              </span>
-              <FaSignInAlt className="login-icon" />
-            </button>
-          ) : (
-            <img src={logoParceira} alt="Logo Parceira" className="logo-parceira" />
-          )}
-        </div>
-      )}
-    </header>
-  )
+  );
 }
 
 function AppContent() {
-  const [mostrarLogin, setMostrarLogin] = useState(false)
-  const [carregando, setCarregando] = useState(false)
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
-  const location = useLocation()
+  const [mostrarLogin, setMostrarLogin] = useState(false);
+  const [carregando, setCarregando] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [reports, setReports] = useState([]); // mensagens novas
+  const [novosCadastros, setNovosCadastros] = useState([]); // cadastros externos
+  const location = useLocation();
 
   useEffect(() => {
     function handleResize() {
-      setIsMobile(window.innerWidth < 768)
+      setIsMobile(window.innerWidth < 768);
     }
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
-    setCarregando(true)
-    const timer = setTimeout(() => setCarregando(false), 400)
-    return () => clearTimeout(timer)
-  }, [location])
+    setCarregando(true);
+    const timer = setTimeout(() => setCarregando(false), 400);
+    return () => clearTimeout(timer);
+  }, [location]);
 
   function fecharLogin() {
-    setMostrarLogin(false)
+    setMostrarLogin(false);
+  }
+
+  function adicionarReport(report) {
+    setReports((prev) => [...prev, report]);
+  }
+
+  function adicionarNovoCadastro(cadastro) {
+    setNovosCadastros((prev) => [...prev, cadastro]);
   }
 
   return (
     <>
       {carregando && <LoadingSpinner />}
 
-      <Header mostrarLogin={mostrarLogin} setMostrarLogin={setMostrarLogin} />
+      <Header
+        mostrarLogin={mostrarLogin}
+        setMostrarLogin={setMostrarLogin}
+        reports={reports}
+        novosCadastros={novosCadastros}
+      />
 
-      {/* Caixa suspensa logo abaixo do header */}
       {!carregando && mostrarLogin && (
         <div
           className="login-dropdown"
           style={{
             position: 'absolute',
-            top: '70px', // ajuste conforme a altura do header
+            top: '70px',
             right: '2rem',
             zIndex: 1000,
             borderRadius: '8px',
             padding: '1rem',
-          
           }}
         >
           <LoginRegisterPanel onLoginSuccess={() => setMostrarLogin(false)} />
@@ -205,33 +166,43 @@ function AppContent() {
 
       <main className="app-main">
         <Routes>
-          <Route path="/" element={
-            <CadastroPage />
-          } />
-          <Route path="/admin" element={<AdminPage />} />
-          <Route path="/cadastro-externo" element={<CadastroFornecedor />} />
-          <Route path="/busca" element={<BuscaPage />} />
-          <Route path="*" element={
-            <h2 style={{ color: 'white', textAlign: 'center' }}>
-              Página não encontrada
-            </h2>
-          } />
+          <Route path="/" element={<CadastroPage />} />
+          <Route
+            path="/admin"
+            element={
+              <AdminPage
+                reports={reports}
+                setReports={setReports}
+                novosCadastros={novosCadastros}
+                setNovosCadastros={setNovosCadastros}
+              />
+            }
+          />
+          <Route path="/busca" element={<BuscaPage adicionarReport={adicionarReport} />} />
+          <Route path="/cadastro-externo" element={<CadastroFornecedor adicionarNovoCadastro={adicionarNovoCadastro} />} />
+          <Route path="/cnpj" element={<Cnpj />} />
+          <Route
+            path="*"
+            element={
+              <h2 style={{ color: 'white', textAlign: 'center' }}>
+                Página não encontrada
+              </h2>
+            }
+          />
         </Routes>
       </main>
 
       <Footer />
     </>
-  )
+  );
 }
 
-function App() {
+export default function App() {
   return (
     <Router>
       <div className="app-container">
         <AppContent />
       </div>
     </Router>
-  )
+  );
 }
-
-export default App
