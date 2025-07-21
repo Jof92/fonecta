@@ -3,7 +3,7 @@ import { supabase } from '../supabaseClient'
 import Toast from './Toast'
 import './FornecedorForm.css'
 
-export default function FornecedorForm({ mostrarTitulo = true }) {
+export default function FornecedorForm({ mostrarTitulo = true, onCadastroFinalizado }) {
   const [nome, setNome] = useState('')
   const [empresa, setEmpresa] = useState('')
   const [whatsapp, setWhatsapp] = useState('')
@@ -112,6 +112,13 @@ export default function FornecedorForm({ mostrarTitulo = true }) {
       setWhatsapp('')
       setTags('')
       setSugestoes([])
+
+      // ✅ Chama a função passada por prop ao finalizar cadastro
+      if (onCadastroFinalizado) {
+        setTimeout(() => {
+          onCadastroFinalizado()
+        }, 1500) // pequeno delay para o Toast aparecer antes de sumir
+      }
     }
   }
 
