@@ -118,6 +118,7 @@ export default function FornecedorListBusca({ adicionarReport, nomeUsuarioLogado
       </div>
 
       <div className="fornecedor-list-container">
+        
         <ul className="fornecedor-list">
           {fornecedores
             .slice()
