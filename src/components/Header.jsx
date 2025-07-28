@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { FaSignInAlt, FaEnvelope, FaArrowLeft } from 'react-icons/fa'
+import { BsPerson } from 'react-icons/bs'  // <--- import do BsPerson
 
 import { supabase } from '../supabaseClient'
 import logoFonecta from '../assets/fonect.png'
@@ -15,6 +16,17 @@ export default function Header({ mostrarLogin, setMostrarLogin, reports = [], us
   const estaNaHome = pathname === '/'
   const estaNoCadastroExterno = pathname === '/cadastro-externo'
   const estaNaAdmin = pathname === '/admin'
+
+  // Estado para detectar mobile
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+
+  useEffect(() => {
+    function handleResize() {
+      setIsMobile(window.innerWidth < 768)
+    }
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   // Estados para controle de UI
   const [mostrarBoxReports, setMostrarBoxReports] = useState(false)
@@ -324,9 +336,14 @@ export default function Header({ mostrarLogin, setMostrarLogin, reports = [], us
             <button
               onClick={() => setMostrarLogin(prev => !prev)}
               className="login-button"
+              aria-label="Botão de Login"
             >
               <span className="login-text">{mostrarLogin ? 'Fechar Login' : 'Login'}</span>
-              <FaSignInAlt className="login-icon" />
+              {isMobile ? (
+                <BsPerson className="login-icon" />
+              ) : (
+                <FaSignInAlt className="login-icon" />
+              )}
             </button>
           )}
 

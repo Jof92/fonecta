@@ -125,12 +125,6 @@
   color: #28a745; /* verde sucesso */
 }
 
-span{
-  background-color: #f0f4ff; /* cor de fundo clara azulada, pode ajustar */
-  padding: 2px;
-  border-radius: 8px;
-}
-
  
 /* Responsividade */
 @media (max-width: 720px) {
