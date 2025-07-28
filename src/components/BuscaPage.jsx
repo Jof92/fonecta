@@ -12,10 +12,7 @@ export default function FornecedorListBusca({ adicionarReport, nomeUsuarioLogado
   const [mostrarSugestoes, setMostrarSugestoes] = useState(false);
   const [marcados, setMarcados] = useState(new Set());
 
-  useEffect(() => {
-    buscarFornecedores();
-  }, [busca]);
-
+  // Buscar fornecedores filtrando por busca
   const buscarFornecedores = async () => {
     const { data, error } = await supabase.from('fornecedores').select('*');
     if (error) return console.error('Erro ao buscar fornecedores:', error);
@@ -34,8 +31,13 @@ export default function FornecedorListBusca({ adicionarReport, nomeUsuarioLogado
     setFornecedores(filtrados);
   };
 
+  // Buscar sugestões de tags a partir do texto digitado
   const buscarSugestoes = async (texto) => {
-    if (texto.length < 4) return setMostrarSugestoes(false);
+    if (texto.length < 2) {
+      setMostrarSugestoes(false);
+      setSugestoes([]);
+      return;
+    }
 
     const { data, error } = await supabase
       .from('fornecedores')
@@ -43,18 +45,27 @@ export default function FornecedorListBusca({ adicionarReport, nomeUsuarioLogado
       .not('tags', 'is', null)
       .limit(50);
 
-    if (error) return console.error('Erro ao buscar tags:', error);
+    if (error) {
+      console.error('Erro ao buscar tags:', error);
+      setMostrarSugestoes(false);
+      return;
+    }
 
     const tags = [...new Set(data.flatMap(f => (Array.isArray(f.tags) ? f.tags : [])))];
-
-    const filtradas = tags.filter(tag =>
-      tag.toLowerCase().includes(texto.toLowerCase())
-    ).map(tag => tag.startsWith('#') ? tag : `#${tag}`);
+    const filtradas = tags
+      .filter(tag => tag.toLowerCase().includes(texto.toLowerCase()))
+      .map(tag => (tag.startsWith('#') ? tag : `#${tag}`));
 
     setSugestoes(filtradas);
     setMostrarSugestoes(true);
   };
 
+  // Atualiza a lista de fornecedores sempre que o texto de busca mudar
+  useEffect(() => {
+    buscarFornecedores();
+  }, [busca]);
+
+  // Função para copiar dados do contato para a área de transferência
   const copiarContato = (f) => {
     const texto = `Nome: ${f.nome}\nEmpresa: ${f.empresa}\nWhatsApp: ${f.whatsapp}`;
     navigator.clipboard.writeText(texto).then(() => {
@@ -63,29 +74,34 @@ export default function FornecedorListBusca({ adicionarReport, nomeUsuarioLogado
     });
   };
 
+  // Marca ou desmarca contato e registra relatório se função passada por props existir
   const toggleMarcado = (f) => {
     const novo = new Set(marcados);
     if (novo.has(f.id)) {
       novo.delete(f.id);
       setMarcados(novo);
-      // Aqui você pode, se quiser, remover o report do pai (não implementado)
     } else {
       novo.add(f.id);
       setMarcados(novo);
 
-      // Envia o report para o componente pai
       if (adicionarReport) {
         adicionarReport({
-          id: `${f.id}-${Date.now()}`, // id único (combina id do fornecedor e timestamp)
-          nomePessoa: nomeUsuarioLogado, // quem fez a marcação
-          contatoMarcado: `${f.nome} (${f.whatsapp})`, // info do contato marcado
+          id: `${f.id}-${Date.now()}`,
+          nomePessoa: nomeUsuarioLogado,
+          contatoMarcado: `${f.nome} (${f.whatsapp})`,
         });
       }
     }
   };
 
+  // Manipula clique em sugestão para preencher o input e esconder sugestões
+  const selecionarSugestao = (tag) => {
+    setBusca(tag);
+    setMostrarSugestoes(false);
+  };
+
   return (
-    <div className="busca-wrapper">
+    <div className="pagina-busca">
       <h2>Buscar Fornecedores</h2>
 
       <div className="search-input-wrapper" style={{ position: 'relative' }}>
@@ -98,18 +114,34 @@ export default function FornecedorListBusca({ adicionarReport, nomeUsuarioLogado
             buscarSugestoes(e.target.value);
           }}
           className="search-input"
-          onFocus={() => busca.length >= 4 && setMostrarSugestoes(true)}
+          onFocus={() => busca.length >= 2 && setMostrarSugestoes(true)}
           onBlur={() => setTimeout(() => setMostrarSugestoes(false), 150)}
+          aria-autocomplete="list"
+          aria-expanded={mostrarSugestoes}
+          aria-haspopup="listbox"
+          aria-controls="tag-sugestoes-list"
+          role="combobox"
         />
         {busca && (
-          <button className="clear-button" onClick={() => setBusca('')} type="button">
+          <button className="clear-button" onClick={() => setBusca('')} type="button" aria-label="Limpar busca">
             ×
           </button>
         )}
         {mostrarSugestoes && sugestoes.length > 0 && (
-          <ul className="tag-sugestoes">
+          <ul
+            id="tag-sugestoes-list"
+            className="tag-sugestoes"
+            role="listbox"
+            aria-label="Sugestões de tags"
+          >
             {sugestoes.map((tag, i) => (
-              <li key={i} className="tag-sugestao" onMouseDown={() => setBusca(tag)}>
+              <li
+                key={i}
+                className="tag-sugestao"
+                role="option"
+                tabIndex={-1}
+                onMouseDown={() => selecionarSugestao(tag)}
+              >
                 {tag}
               </li>
             ))}
@@ -118,7 +150,6 @@ export default function FornecedorListBusca({ adicionarReport, nomeUsuarioLogado
       </div>
 
       <div className="fornecedor-list-container">
-        
         <ul className="fornecedor-list">
           {fornecedores
             .slice()
@@ -179,9 +210,7 @@ export default function FornecedorListBusca({ adicionarReport, nomeUsuarioLogado
                 </div>
               </li>
             ))}
-          {fornecedores.length === 0 && (
-            <EmptyState mensagem="Não encontrei nada... que pena!" />
-          )}
+          {fornecedores.length === 0 && <EmptyState mensagem="Não encontrei nada... que pena!" />}
         </ul>
       </div>
 

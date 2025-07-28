@@ -1,20 +1,12 @@
 /* Fundo com degradê animado */
 .app-container {
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   background: linear-gradient(135deg, #009DFF, #00B8D9, #00C48C);
   background-size: 400% 400%;
   animation: gradientMove 15s ease infinite;
-  overflow: auto;
-}
-
-/* Página principal */
-.page-container {
-  display: flex;
-  align-items: flex-start;
-  gap: 10rem;
-  position: relative;
+  overflow-x: hidden;
 }
 
 /* Animação do fundo */
@@ -53,7 +45,7 @@
   background-color: white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   position: relative;
-  z-index: 100; /* sempre acima do overlay */
+  z-index: 100;
 }
 
 .header-left {
@@ -92,8 +84,14 @@
   align-items: stretch;
   padding: 0 2rem;
   gap: 2rem;
-  overflow: auto;
   flex-wrap: nowrap;
+}
+
+.page-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 10rem;
+  position: relative;
 }
 
 /* Blocos flutuantes */
@@ -116,7 +114,7 @@
 
 /* Rodapé */
 .app-footer {
-  flex: 0 0 40px;
+  flex: 0 0 auto;
   background-color: #ffffff;
   border-top: 1px solid #ccc;
   display: flex;
@@ -124,7 +122,8 @@
   align-items: center;
   font-size: 0.9rem;
   color: #666;
-  margin-top: 0 !important;
+  padding: 0.5rem;
+  margin-top: auto;
 }
 
 /* Títulos */
@@ -175,7 +174,6 @@ button:hover {
   padding: 1rem;
   max-width: 320px;
   z-index: 110;
-  /* Aplica animação suave nos filhos */
 }
 
 .login-panel * {
@@ -184,9 +182,8 @@ button:hover {
 
 /* Overlay e login no responsivo */
 @media (max-width: 768px) {
-  /* Ajusta container para scroll natural */
   .app-container {
-    height: auto !important;
+    min-height: 100vh !important;
     overflow: visible !important;
   }
 
@@ -195,20 +192,15 @@ button:hover {
     flex-direction: column !important;
     align-items: center !important;
     gap: 1.2rem;
-    overflow-x: auto;
   }
 
   .app-form-container,
-  .app-list-container,
-  .login-container {
+  .login-container,
+  .app-list-container {
     width: 100% !important;
     max-width: 100%;
     height: auto;
     box-sizing: border-box;
-  }
-
-  .app-form-container {
-    flex: none;
   }
 
   .fonecta-title {
@@ -243,18 +235,17 @@ button:hover {
   }
 
   .login-text {
-    display: none; /* Esconde texto no responsivo */
+    display: none;
   }
 
   .login-icon {
-    display: inline; /* Exibe ícone no responsivo */
+    display: inline;
   }
 
-  /* Overlay para escurecer o fundo */
   .login-overlay.active {
     display: block;
     position: fixed;
-    top: 60px; /* altura do header */
+    top: 60px;
     left: 0;
     width: 100vw;
     height: calc(100vh - 60px);
@@ -266,13 +257,12 @@ button:hover {
     display: none;
   }
 
-  /* Painel de login fixado no topo abaixo do header */
   .login-panel {
     position: fixed;
-    top: 60px; /* altura do header */
+    top: 60px;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 210; /* acima do overlay */
+    z-index: 210;
     background: white;
     border-radius: 12px;
     padding: 1rem;
@@ -282,10 +272,7 @@ button:hover {
   }
 }
 
-/* ======================= */
 /* CARROSSEL (imagem + texto lado a lado) */
-/* ======================= */
-/* Container do carrossel: flex, alinhamento, espaçamento */
 .carousel-container {
   display: flex;
   align-items: center;
@@ -293,11 +280,9 @@ button:hover {
   gap: 2rem;
   margin-top: 2rem;
   max-width: 90vw;
-  /* Transição para a opacidade suave */
   transition: opacity 1.5s ease-in-out;
 }
 
-/* Imagem: ocupa mais espaço e tem borda arredondada */
 .carousel-image {
   width: 45vw;
   max-width: 600px;
@@ -307,7 +292,6 @@ button:hover {
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
-/* Texto: tamanho grande, legível, max width para evitar esticar */
 .carousel-text {
   font-size: 2rem;
   font-weight: 600;
@@ -318,7 +302,6 @@ button:hover {
   user-select: none;
 }
 
-/* Responsividade para telas menores */
 @media (max-width: 768px) {
   .carousel-container {
     flex-direction: column;
@@ -338,11 +321,11 @@ button:hover {
   }
 }
 
-/* Global reset for html and body scroll */
+/* Global reset */
 html, body {
-  height: 100%;
   margin: 0;
   padding: 0;
+  height: 100%;
   overflow-x: hidden;
   overflow-y: auto;
 }

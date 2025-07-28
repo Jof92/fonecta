@@ -1,41 +1,160 @@
-.cnpj-container {
-  padding: 1rem;
-  border-radius: 8px;
-  background-color: #f8f9fa;
-  max-width: 500px;
-  margin: auto;
+.cnpj-page {
+  max-width: 900px;
+  width: 90vw;
+  margin: 2rem auto;
+  background-color: #fff;
+  padding: 2rem 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #222;
+  display: flex;
+  flex-direction: column;
 }
 
-.cnpj-form {
+.cnpj-form-topo {
   display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
+  gap: 1rem;
+  margin-bottom: 1.8rem;
+  align-items: center;
+  justify-content: flex-start;
 }
 
 .cnpj-input {
   flex: 1;
-  padding: 0.5rem;
-  font-size: 1rem;
+  padding: 0.6rem 0.75rem;
+  font-size: 1.1rem;
+  border: 1.8px solid #ccc;
+  border-radius: 6px;
+  transition: border-color 0.3s ease;
+}
+
+.cnpj-input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 6px rgba(0, 123, 255, 0.5);
 }
 
 .cnpj-button {
   background-color: #0066cc;
   color: white;
   border: none;
-  padding: 0.5rem 1rem;
+  padding: 0.7rem 1.4rem;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 6px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+  user-select: none;
 }
 
-.cnpj-button:hover {
+.cnpj-button:hover,
+.cnpj-button:focus {
   background-color: #004a99;
+  outline: none;
+}
+
+.cnpj-loading {
+  color: #007bff;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  font-size: 1rem;
 }
 
 .cnpj-erro {
-  color: red;
-  font-weight: bold;
+  color: #dc3545;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  font-size: 1rem;
 }
 
-.cnpj-result p {
-  margin: 0.3rem 0;
+.cnpj-result-box {
+  background-color: #fefefe;
+  border: 1.5px solid #ddd;
+  border-radius: 10px;
+  padding: 1.8rem 2rem;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.07);
+  color: #333;
+  line-height: 1.6;
+}
+
+.cnpj-result-box h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-weight: 700;
+  color: #222;
+  font-size: 1.6rem;
+}
+
+.cnpj-campo {
+  margin: 0.6rem 0;
+  font-size: 1.05rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  user-select: text;
+}
+
+.cnpj-campo strong {
+  width: 180px;
+  flex-shrink: 0;
+  color: #444;
+}
+
+.cnpj-valor {
+  flex: 1;
+  color: #000;
+  word-break: break-word;
+}
+
+.btn-copiar {
+  cursor: pointer;
+  color: #666;
+  font-size: 1.2rem;
+  transition: color 0.3s ease;
+  user-select: none;
+}
+
+.btn-copiar:hover,
+.btn-copiar:focus {
+  color: #007bff;
+  outline: none;
+}
+
+.btn-copiar.copied {
+  color: #28a745; /* verde sucesso */
+}
+
+span{
+  background-color: #f0f4ff; /* cor de fundo clara azulada, pode ajustar */
+  padding: 2px;
+  border-radius: 8px;
+}
+
+ 
+/* Responsividade */
+@media (max-width: 720px) {
+  .cnpj-page {
+    width: 95vw;
+    padding: 1.5rem 1rem;
+  }
+
+  .cnpj-form-topo {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .cnpj-button {
+    width: 100%;
+  }
+
+  .cnpj-campo {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+
+  .cnpj-campo strong {
+    width: 100%;
+  }
 }

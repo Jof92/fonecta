@@ -22,10 +22,7 @@ export default function FornecedorList() {
   const [sugestoes, setSugestoes] = useState([])
   const [mostrarSugestoes, setMostrarSugestoes] = useState(false)
 
-  useEffect(() => {
-    buscarFornecedores()
-  }, [busca])
-
+  // Função para buscar fornecedores, filtrando por busca no nome, empresa ou tags
   const buscarFornecedores = async () => {
     const { data, error } = await supabase.from('fornecedores').select('*')
 
@@ -54,8 +51,9 @@ export default function FornecedorList() {
     setModoSelecao(false)
   }
 
+  // Função para buscar sugestões de tags conforme texto digitado
   const buscarSugestoes = async (texto) => {
-    if (texto.length < 4) {
+    if (texto.length < 2) { // Sugestões começam a partir de 2 caracteres
       setSugestoes([])
       setMostrarSugestoes(false)
       return
@@ -74,6 +72,7 @@ export default function FornecedorList() {
       return
     }
 
+    // Extrair todas tags dos fornecedores
     let tags = []
     if (tagsData) {
       tagsData.forEach(f => {
@@ -82,15 +81,23 @@ export default function FornecedorList() {
         }
       })
     }
+
+    // Filtrar tags que contenham o texto digitado (ignorando case)
     const tagsFiltradas = [...new Set(tags)].filter(tag =>
       tag.toLowerCase().includes(texto.toLowerCase())
     )
 
+    // Adicionar # na frente se não tiver
     const tagsComHash = tagsFiltradas.map(t => (t.startsWith('#') ? t : `#${t}`))
 
     setSugestoes(tagsComHash)
     setMostrarSugestoes(true)
   }
+
+  // Atualizar fornecedores sempre que busca mudar
+  useEffect(() => {
+    buscarFornecedores()
+  }, [busca])
 
   const toggleModoSelecao = () => {
     if (modoSelecao) {
@@ -214,7 +221,7 @@ export default function FornecedorList() {
             buscarSugestoes(e.target.value)
           }}
           className="search-input"
-          onFocus={() => busca.length >= 4 && setMostrarSugestoes(true)}
+          onFocus={() => busca.length >= 2 && setMostrarSugestoes(true)}
           onBlur={() => setTimeout(() => setMostrarSugestoes(false), 150)}
         />
         {busca && (

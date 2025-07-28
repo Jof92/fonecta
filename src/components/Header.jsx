@@ -16,14 +16,18 @@ export default function Header({ mostrarLogin, setMostrarLogin, reports = [], us
   const estaNoCadastroExterno = pathname === '/cadastro-externo'
   const estaNaAdmin = pathname === '/admin'
 
+  // Estados para controle de UI
   const [mostrarBoxReports, setMostrarBoxReports] = useState(false)
   const [reportSelecionado, setReportSelecionado] = useState(null)
   const [idsLidos, setIdsLidos] = useState(new Set())
   const [mostrarMenuLogo, setMostrarMenuLogo] = useState(false)
 
+  // Referências para detectar cliques fora das áreas
   const menuRef = useRef(null)
+  const reportsRef = useRef(null)
   const inputFileRef = useRef(null)
 
+  // Controle da logo parceira, com cache busting para evitar cache antigo
   const [logoParceira, setLogoParceira] = useState(user?.logo_parceira_url || logoParceiraDefault)
 
   useEffect(() => {
@@ -34,6 +38,7 @@ export default function Header({ mostrarLogin, setMostrarLogin, reports = [], us
     }
   }, [user?.logo_parceira_url])
 
+  // Fecha menu da logo ao clicar fora
   useEffect(() => {
     function handleClickOutside(event) {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -42,16 +47,30 @@ export default function Header({ mostrarLogin, setMostrarLogin, reports = [], us
     }
     if (mostrarMenuLogo) {
       document.addEventListener('mousedown', handleClickOutside)
-    } else {
-      document.removeEventListener('mousedown', handleClickOutside)
     }
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
   }, [mostrarMenuLogo])
 
+  // Fecha caixa de reports ao clicar fora dela
+  useEffect(() => {
+    function handleClickOutsideReport(event) {
+      if (reportsRef.current && !reportsRef.current.contains(event.target)) {
+        setMostrarBoxReports(false)
+      }
+    }
+    if (mostrarBoxReports) {
+      document.addEventListener('mousedown', handleClickOutsideReport)
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutsideReport)
+    }
+  }, [mostrarBoxReports])
+
   const mensagensNaoLidas = reports.filter(r => !idsLidos.has(r.id))
 
+  // Toggle da caixa de reports
   function toggleBoxReports() {
     setMostrarBoxReports(prev => {
       const novoEstado = !prev
@@ -60,24 +79,29 @@ export default function Header({ mostrarLogin, setMostrarLogin, reports = [], us
     })
   }
 
+  // Abrir detalhe da mensagem reportada
   function abrirDetalhe(report) {
     setReportSelecionado(report)
     setIdsLidos(prev => new Set(prev).add(report.id))
   }
 
+  // Fechar detalhe da mensagem
   function fecharDetalhe() {
     setReportSelecionado(null)
   }
 
+  // Toggle do menu da logo parceira
   function toggleMenuLogo() {
     setMostrarMenuLogo(prev => !prev)
   }
 
+  // Navegar para home (sair)
   function sair() {
     setMostrarMenuLogo(false)
     navigate('/')
   }
 
+  // Upload de nova logo parceira
   async function handleFileChange(event) {
     const file = event.target.files[0]
     if (!file) return
@@ -126,6 +150,7 @@ export default function Header({ mostrarLogin, setMostrarLogin, reports = [], us
     setMostrarMenuLogo(false)
   }
 
+  // Abrir seletor de arquivos para upload
   function abrirSeletorArquivos() {
     if (inputFileRef.current) {
       inputFileRef.current.click()
@@ -317,6 +342,7 @@ export default function Header({ mostrarLogin, setMostrarLogin, reports = [], us
 
       {mostrarBoxReports && estaNaAdmin && (
         <div
+          ref={reportsRef}
           style={{
             position: 'absolute',
             top: '3.5rem',
@@ -333,7 +359,7 @@ export default function Header({ mostrarLogin, setMostrarLogin, reports = [], us
         >
           {!reportSelecionado ? (
             <>
-              <h4 style={{ margin: '0 0 0.5rem 0' }}>Mensagens</h4>
+              <h4 style={{ margin: '0.5rem', textAlign: 'center' }}>Mensagens</h4>
               {reports.map(r => (
                 <div
                   key={r.id}
@@ -345,7 +371,7 @@ export default function Header({ mostrarLogin, setMostrarLogin, reports = [], us
                   }}
                   onClick={() => abrirDetalhe(r)}
                 >
-                  <strong>{r.nomePessoa}</strong>
+                  {r.nomePessoa}
                 </div>
               ))}
             </>
@@ -368,7 +394,6 @@ export default function Header({ mostrarLogin, setMostrarLogin, reports = [], us
                 title="Voltar"
               >
                 <FaArrowLeft />
-                Voltar
               </button>
               <p>
                 <strong>{reportSelecionado.nomePessoa}</strong> reportou que o contato{' '}

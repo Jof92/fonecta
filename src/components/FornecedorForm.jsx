@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { supabase } from '../supabaseClient'
 import Toast from './Toast'
 import './FornecedorForm.css'
@@ -10,9 +10,12 @@ export default function FornecedorForm({ mostrarTitulo = true, onCadastroFinaliz
   const [tags, setTags] = useState('')
   const [todasTags, setTodasTags] = useState([])
   const [sugestoes, setSugestoes] = useState([])
+  const [sugestaoSelecionada, setSugestaoSelecionada] = useState(-1)
 
   const [mensagem, setMensagem] = useState(null)
   const [tipoMensagem, setTipoMensagem] = useState('sucesso')
+
+  const inputTagsRef = useRef(null)
 
   useEffect(() => {
     const carregarTags = async () => {
@@ -35,6 +38,7 @@ export default function FornecedorForm({ mostrarTitulo = true, onCadastroFinaliz
   const handleTagsChange = (e) => {
     const texto = e.target.value
     setTags(texto)
+    setSugestaoSelecionada(-1) // resetar seleção ao digitar
 
     const partes = texto.split(/\s+/)
     const ultima = partes[partes.length - 1]
@@ -50,11 +54,34 @@ export default function FornecedorForm({ mostrarTitulo = true, onCadastroFinaliz
     }
   }
 
-  const handleSugestaoClick = (tagSelecionada) => {
+  const selecionarSugestao = (tagSelecionada) => {
     const partes = tags.trim().split(/\s+/)
     partes[partes.length - 1] = tagSelecionada
     setTags(partes.join(' ') + ' ')
     setSugestoes([])
+    setSugestaoSelecionada(-1)
+    inputTagsRef.current?.focus()
+  }
+
+  const handleKeyDownTags = (e) => {
+    if (sugestoes.length === 0) return
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      setSugestaoSelecionada(prev =>
+        prev < sugestoes.length - 1 ? prev + 1 : 0
+      )
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      setSugestaoSelecionada(prev =>
+        prev > 0 ? prev - 1 : sugestoes.length - 1
+      )
+    } else if (e.key === 'Enter' || e.key === 'Tab') {
+      if (sugestaoSelecionada >= 0 && sugestaoSelecionada < sugestoes.length) {
+        e.preventDefault()
+        selecionarSugestao(sugestoes[sugestaoSelecionada])
+      }
+    }
   }
 
   const exibirMensagem = (texto, tipo = 'sucesso') => {
@@ -112,12 +139,12 @@ export default function FornecedorForm({ mostrarTitulo = true, onCadastroFinaliz
       setWhatsapp('')
       setTags('')
       setSugestoes([])
+      setSugestaoSelecionada(-1)
 
-      // ✅ Chama a função passada por prop ao finalizar cadastro
       if (onCadastroFinalizado) {
         setTimeout(() => {
           onCadastroFinalizado()
-        }, 1500) // pequeno delay para o Toast aparecer antes de sumir
+        }, 1500)
       }
     }
   }
@@ -166,19 +193,24 @@ export default function FornecedorForm({ mostrarTitulo = true, onCadastroFinaliz
         <label className="form-label">Hashtags:</label>
         <div style={{ position: 'relative' }}>
           <input
+            ref={inputTagsRef}
             className="form-input"
             type="text"
             value={tags}
             onChange={handleTagsChange}
+            onKeyDown={handleKeyDownTags}
             placeholder="Ex.: #cimento #areia"
+            autoComplete="off"
           />
           {sugestoes.length > 0 && (
-            <ul className="tag-sugestoes">
+            <ul className="tag-sugestoes" role="listbox">
               {sugestoes.map((sug, idx) => (
                 <li
                   key={idx}
-                  className="tag-sugestao"
-                  onClick={() => handleSugestaoClick(sug)}
+                  className={`tag-sugestao ${idx === sugestaoSelecionada ? 'selecionada' : ''}`}
+                  onClick={() => selecionarSugestao(sug)}
+                  role="option"
+                  aria-selected={idx === sugestaoSelecionada}
                 >
                   {sug}
                 </li>

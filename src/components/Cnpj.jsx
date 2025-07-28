@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { FaCopy } from 'react-icons/fa';
 import './Cnpj.css';
 
 export default function Cnpj() {
@@ -6,8 +7,42 @@ export default function Cnpj() {
   const [dados, setDados] = useState(null);
   const [erro, setErro] = useState('');
   const [loading, setLoading] = useState(false);
+  const [copiadoCampo, setCopiadoCampo] = useState(null);
 
   const limparCNPJ = (valor) => valor.replace(/\D/g, '');
+
+  const formatarNome = (nome) => {
+    if (!nome) return '.';
+    const texto = nome.toLowerCase();
+    return texto.charAt(0).toUpperCase() + texto.slice(1);
+  };
+
+  const montarEndereco = (dados) => {
+    if (!dados) return '.';
+
+    const logradouro = dados.descricao_logradouro?.trim() || '';
+    const numero = dados.numero?.trim() || '';
+    const bairro = dados.bairro?.trim() || '';
+    const municipio = dados.municipio?.trim() || '';
+    const uf = dados.uf?.trim() || '';
+
+    const enderecoPartes = [];
+    if (logradouro) enderecoPartes.push(logradouro);
+    if (numero) enderecoPartes.push(numero);
+
+    const localPartes = [];
+    if (bairro) localPartes.push(bairro);
+    if (municipio) localPartes.push(municipio);
+    if (uf) localPartes.push(uf);
+
+    const endereco = enderecoPartes.join(', ');
+    const local = localPartes.join(' . ');
+
+    if (endereco && local) return `${endereco} - ${local}`;
+    if (endereco) return endereco;
+    if (local) return local;
+    return ',';
+  };
 
   const buscarCNPJ = async () => {
     const cnpjLimpo = limparCNPJ(cnpj);
@@ -27,6 +62,7 @@ export default function Cnpj() {
       if (!response.ok) throw new Error('CNPJ não encontrado.');
 
       const json = await response.json();
+      console.log('Dados completos da API:', json);
       setDados(json);
     } catch (err) {
       setErro(err.message);
@@ -35,10 +71,39 @@ export default function Cnpj() {
     }
   };
 
+  const mostrarDado = (valor, placeholder = '.') => {
+    if (valor === null || valor === undefined || valor === '') return placeholder;
+    if (Array.isArray(valor) && valor.length === 0) return placeholder;
+    return valor;
+  };
+
+  const copiarTexto = (texto, campo) => {
+    if (!texto || texto === '—') return;
+    navigator.clipboard.writeText(texto).then(() => {
+      setCopiadoCampo(campo);
+      setTimeout(() => setCopiadoCampo(null), 1500);
+    });
+  };
+
+  const campos = [
+    { label: 'CNPJ', valor: mostrarDado(dados?.cnpj) },
+    { label: 'Razão Social', valor: mostrarDado(formatarNome(dados?.razao_social)) },
+    { label: 'Endereço', valor: montarEndereco(dados) },
+    { label: 'CEP', valor: mostrarDado(dados?.cep) },
+    { label: 'Telefone', valor: mostrarDado(dados?.ddd_telefone_1) },
+    {
+      label: 'Inscrição Estadual/Municipal',
+      valor: mostrarDado(dados?.inscricoes_estaduais?.[0]?.inscricao_estadual)
+    },
+    {
+      label: 'CNAE',
+      valor: `${mostrarDado(dados?.cnae_fiscal)} - ${mostrarDado(dados?.cnae_fiscal_descricao)}`
+    }
+  ];
+
   return (
-    <div className="cnpj-container bloco-flutuante">
-      <h3>Consultar CNPJ</h3>
-      <div className="cnpj-form">
+    <div className="cnpj-page">
+      <div className="cnpj-form-topo">
         <input
           type="text"
           placeholder="Digite o CNPJ"
@@ -51,20 +116,33 @@ export default function Cnpj() {
         </button>
       </div>
 
-      {loading && <p>🔄 Buscando dados...</p>}
+      {loading && <p className="cnpj-loading">🔄 Buscando dados...</p>}
       {erro && <p className="cnpj-erro">⚠️ {erro}</p>}
 
-      {dados && (
-        <div className="cnpj-result">
-          <p><strong>CNPJ:</strong> {dados.cnpj}</p>
-          <p><strong>Razão Social:</strong> {dados.razao_social}</p>
-          <p><strong>Endereço:</strong> {dados.descricao_logradouro}, {dados.numero} - {dados.bairro}, {dados.municipio} - {dados.uf}</p>
-          <p><strong>CEP:</strong> {dados.cep}</p>
-          <p><strong>Telefone:</strong> {dados.ddd_telefone_1 || 'Não informado'}</p>
-          <p><strong>Inscrição Estadual/Municipal:</strong> {dados.inscricoes_estaduais?.[0]?.inscricao_estadual || 'Não informado'}</p>
-          <p><strong>CNAE:</strong> {dados.cnae_fiscal} - {dados.cnae_fiscal_descricao}</p>
+      <div className="cnpj-result-container">
+        <div className="cnpj-result-box">
+          <h3>Informações do CNPJ</h3>
+          {campos.map(({ label, valor }) => (
+            <p key={label} className="cnpj-campo">
+              <strong>{label}:</strong>{' '}
+              <span className="cnpj-valor">{valor}</span>
+              <FaCopy
+                className={`btn-copiar ${copiadoCampo === label ? 'copied' : ''}`}
+                title={`Copiar ${label}`}
+                onClick={() => copiarTexto(valor, label)}
+                tabIndex={0}
+                role="button"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    copiarTexto(valor, label);
+                  }
+                }}
+              />
+            </p>
+          ))}
         </div>
-      )}
+      </div>
     </div>
   );
 }

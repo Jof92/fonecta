@@ -5,6 +5,7 @@
   background-color: #f9fafb;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   height: 320px;
+  width: 500px;
   overflow-y: auto;
 }
 
@@ -57,7 +58,7 @@
 
 .action-icon {
   cursor: pointer;
-  color: #333;
+  color: #959595;
   transition: color 0.2s ease-in-out;
   font-size: 1.2rem;
 }
@@ -65,6 +66,12 @@
 .action-icon:hover {
   color: #007bff;
 }
+.tag-sugestao.selecionada,
+.tag-sugestao:hover {
+  background-color: #bde4ff;
+  cursor: pointer;
+}
+
 
 .tag-button {
   background: none;
@@ -306,6 +313,11 @@
   margin-right: 5px;
   padding: 1px 5px;
 }
+
+@media (max-width: 768px) {
+  .fornecedor-list-container {
+    width: auto;
+  }}
 
 
 
