@@ -18,10 +18,12 @@
   margin-bottom: 1.8rem;
   align-items: center;
   justify-content: flex-start;
+  flex-wrap: wrap;
 }
 
 .cnpj-input {
   flex: 1;
+  min-width: 240px;
   padding: 0.6rem 0.75rem;
   font-size: 1.1rem;
   border: 1.8px solid #ccc;
@@ -46,6 +48,7 @@
   font-weight: 600;
   transition: background-color 0.3s ease;
   user-select: none;
+  min-width: 120px;
 }
 
 .cnpj-button:hover,
@@ -68,14 +71,16 @@
   font-size: 1rem;
 }
 
+/* Resultado com fundo colorido e responsivo */
 .cnpj-result-box {
-  background-color: #fefefe;
+  background-color: #f0f8ff;
   border: 1.5px solid #ddd;
   border-radius: 10px;
   padding: 1.8rem 2rem;
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.07);
   color: #333;
   line-height: 1.6;
+  word-wrap: break-word;
 }
 
 .cnpj-result-box h3 {
@@ -83,28 +88,30 @@
   margin-bottom: 1rem;
   font-weight: 700;
   color: #222;
-  font-size: 1.6rem;
+  font-size: clamp(1.2rem, 2.5vw, 1.6rem);
 }
 
 .cnpj-campo {
   margin: 0.6rem 0;
-  font-size: 1.05rem;
+  font-size: clamp(1rem, 2vw, 1.1rem);
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  user-select: text;
+  flex-wrap: wrap;
 }
 
 .cnpj-campo strong {
   width: 180px;
   flex-shrink: 0;
   color: #444;
+  font-weight: 600;
 }
 
 .cnpj-valor {
   flex: 1;
   color: #000;
   word-break: break-word;
+  min-width: 100px;
 }
 
 .btn-copiar {
@@ -122,17 +129,11 @@
 }
 
 .btn-copiar.copied {
-  color: #28a745; /* verde sucesso */
+  color: #28a745;
 }
 
- 
-/* Responsividade */
+/* Responsividade aprimorada */
 @media (max-width: 720px) {
-  .cnpj-page {
-    width: 95vw;
-    padding: 1.5rem 1rem;
-  }
-
   .cnpj-form-topo {
     flex-direction: column;
     align-items: stretch;
@@ -143,12 +144,26 @@
   }
 
   .cnpj-campo {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
     gap: 0.25rem;
   }
 
   .cnpj-campo strong {
     width: 100%;
+    margin-bottom: 0.2rem;
+  }
+
+  .cnpj-valor {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .btn-copiar {
+    margin-left: auto;
   }
 }

@@ -189,7 +189,7 @@ button:hover {
 
   .app-main,
   .page-container {
-    flex-direction: column !important;
+    
     align-items: center !important;
     gap: 1.2rem;
   }
