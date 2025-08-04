@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { FaSignInAlt, FaEnvelope, FaArrowLeft } from 'react-icons/fa'
-import { BsPerson } from 'react-icons/bs'  // <--- import do BsPerson
+import { FaEnvelope, FaArrowLeft } from 'react-icons/fa'
+import { BsPerson } from 'react-icons/bs'
 
 import { supabase } from '../supabaseClient'
 import logoFonecta from '../assets/fonect.png'
@@ -17,8 +17,8 @@ export default function Header({ mostrarLogin, setMostrarLogin, reports = [], us
   const estaNoCadastroExterno = pathname === '/cadastro-externo'
   const estaNaAdmin = pathname === '/admin'
 
-  // Estado para detectar mobile
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+  const [loginAtivo, setLoginAtivo] = useState(false)
 
   useEffect(() => {
     function handleResize() {
@@ -28,18 +28,16 @@ export default function Header({ mostrarLogin, setMostrarLogin, reports = [], us
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
-  // Estados para controle de UI
+  // Estados e refs para reports e menu logo
   const [mostrarBoxReports, setMostrarBoxReports] = useState(false)
   const [reportSelecionado, setReportSelecionado] = useState(null)
   const [idsLidos, setIdsLidos] = useState(new Set())
   const [mostrarMenuLogo, setMostrarMenuLogo] = useState(false)
 
-  // Referências para detectar cliques fora das áreas
   const menuRef = useRef(null)
   const reportsRef = useRef(null)
   const inputFileRef = useRef(null)
 
-  // Controle da logo parceira, com cache busting para evitar cache antigo
   const [logoParceira, setLogoParceira] = useState(user?.logo_parceira_url || logoParceiraDefault)
 
   useEffect(() => {
@@ -50,7 +48,7 @@ export default function Header({ mostrarLogin, setMostrarLogin, reports = [], us
     }
   }, [user?.logo_parceira_url])
 
-  // Fecha menu da logo ao clicar fora
+  // Fechar menus ao clicar fora
   useEffect(() => {
     function handleClickOutside(event) {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -65,7 +63,6 @@ export default function Header({ mostrarLogin, setMostrarLogin, reports = [], us
     }
   }, [mostrarMenuLogo])
 
-  // Fecha caixa de reports ao clicar fora dela
   useEffect(() => {
     function handleClickOutsideReport(event) {
       if (reportsRef.current && !reportsRef.current.contains(event.target)) {
@@ -82,7 +79,6 @@ export default function Header({ mostrarLogin, setMostrarLogin, reports = [], us
 
   const mensagensNaoLidas = reports.filter(r => !idsLidos.has(r.id))
 
-  // Toggle da caixa de reports
   function toggleBoxReports() {
     setMostrarBoxReports(prev => {
       const novoEstado = !prev
@@ -91,29 +87,24 @@ export default function Header({ mostrarLogin, setMostrarLogin, reports = [], us
     })
   }
 
-  // Abrir detalhe da mensagem reportada
   function abrirDetalhe(report) {
     setReportSelecionado(report)
     setIdsLidos(prev => new Set(prev).add(report.id))
   }
 
-  // Fechar detalhe da mensagem
   function fecharDetalhe() {
     setReportSelecionado(null)
   }
 
-  // Toggle do menu da logo parceira
   function toggleMenuLogo() {
     setMostrarMenuLogo(prev => !prev)
   }
 
-  // Navegar para home (sair)
   function sair() {
     setMostrarMenuLogo(false)
     navigate('/')
   }
 
-  // Upload de nova logo parceira
   async function handleFileChange(event) {
     const file = event.target.files[0]
     if (!file) return
@@ -162,11 +153,15 @@ export default function Header({ mostrarLogin, setMostrarLogin, reports = [], us
     setMostrarMenuLogo(false)
   }
 
-  // Abrir seletor de arquivos para upload
   function abrirSeletorArquivos() {
     if (inputFileRef.current) {
       inputFileRef.current.click()
     }
+  }
+
+  function toggleLogin() {
+    setLoginAtivo(prev => !prev)
+    setMostrarLogin(prev => !prev)
   }
 
   const corIcone = mensagensNaoLidas.length > 0 ? '#004a99' : '#4a90e2'
@@ -334,16 +329,14 @@ export default function Header({ mostrarLogin, setMostrarLogin, reports = [], us
 
           {estaNaHome && (
             <button
-              onClick={() => setMostrarLogin(prev => !prev)}
-              className="login-button"
-              aria-label="Botão de Login"
+              onClick={toggleLogin}
+              className={`login-button ${loginAtivo ? 'active' : ''}`}
+              aria-pressed={loginAtivo}
+              aria-label={loginAtivo ? 'Fechar login' : 'Abrir login'}
+              title={loginAtivo ? 'Fechar login' : 'Abrir login'}
+              type="button"
             >
-              <span className="login-text">{mostrarLogin ? 'Fechar Login' : 'Login'}</span>
-              {isMobile ? (
-                <BsPerson className="login-icon" />
-              ) : (
-                <FaSignInAlt className="login-icon" />
-              )}
+              <BsPerson />
             </button>
           )}
 
