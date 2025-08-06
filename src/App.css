@@ -162,8 +162,7 @@ button:hover {
 
 /* Estado ativo: botão fica verde */
 .login-button.active {
-  background-color: #28a745; /* verde */
-  border-color: #1e7e34;
+  background-color: #00C48C; /* verde */
 }
 
 /* Ícone dentro do botão login */

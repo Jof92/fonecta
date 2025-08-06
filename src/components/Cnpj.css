@@ -131,6 +131,18 @@
 .btn-copiar.copied {
   color: #28a745;
 }
+.cnpj-imagem-inicial {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px; /* ajuste o tamanho que quiser */
+}
+
+.cnpj-imagem-inicial img {
+  max-width: 150px;
+  opacity: 0.6;
+}
+
 
 /* Responsividade aprimorada */
 @media (max-width: 720px) {

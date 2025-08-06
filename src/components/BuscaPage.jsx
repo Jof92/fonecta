@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../supabaseClient';
-import { FaCopy, FaTags, FaMobileAlt } from 'react-icons/fa';
+import { FaCopy, FaTags, FaPhoneAlt, FaWhatsapp } from 'react-icons/fa';
 import './BuscaPage.css';
 import EmptyState from './EmptyState';
 
@@ -159,16 +159,35 @@ export default function FornecedorListBusca({ adicionarReport, nomeUsuarioLogado
                 <div className="fornecedor-info">
                   <strong>{f.nome}</strong> — {f.empresa}
                   <br />
-                  <FaMobileAlt style={{ color: '#B197FC', marginRight: 6 }} />
-                  <a
-                    href={`https://wa.me/${f.whatsapp.replace(/\D/g, '')}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="fornecedor-whatsapp-link"
-                    style={{ color: '#196F3D', fontWeight: 'bold' }}
+                  <div
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      whiteSpace: 'nowrap',
+                      marginTop: '4px'
+                    }}
                   >
-                    {f.whatsapp}
-                  </a>
+                    <a
+                      href={`tel:${f.whatsapp.replace(/\D/g, '')}`}
+                      title="Ligar"
+                      style={{ color: '#00C48C', fontSize: '1.1rem' }}
+                    >
+                      <FaPhoneAlt />
+                    </a>
+                    <a
+                      href={`https://wa.me/${f.whatsapp.replace(/\D/g, '')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title="WhatsApp"
+                      style={{ color: '#00C48C', fontSize: '1.1rem' }}
+                    >
+                      <FaWhatsapp />
+                    </a>
+                    <span style={{ fontWeight: 'bold', color: '#333' }}>
+                      {f.whatsapp}
+                    </span>
+                  </div>
                   <br />
                   <FaTags style={{ color: '#B197FC', marginRight: 6 }} />
                   {f.tags?.map((tag) => (

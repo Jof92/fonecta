@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { supabase } from '../supabaseClient'
-import { FaEdit, FaTrash, FaCopy, FaMobileAlt, FaTags } from 'react-icons/fa'
+import {
+  FaEdit,
+  FaTrash,
+  FaCopy,
+  FaTags,
+  FaPhoneAlt,
+  FaWhatsapp
+} from 'react-icons/fa'
 import { VscVerified } from 'react-icons/vsc'
 import './FornecedorList.css'
 import EmptyState from './EmptyState'
@@ -22,7 +29,10 @@ export default function FornecedorList() {
   const [sugestoes, setSugestoes] = useState([])
   const [mostrarSugestoes, setMostrarSugestoes] = useState(false)
 
-  // Função para buscar fornecedores, filtrando por busca no nome, empresa ou tags
+  useEffect(() => {
+    buscarFornecedores()
+  }, [busca])
+
   const buscarFornecedores = async () => {
     const { data, error } = await supabase.from('fornecedores').select('*')
 
@@ -39,7 +49,6 @@ export default function FornecedorList() {
     }
 
     const termo = busca.toLowerCase()
-
     const filtrados = data.filter(f =>
       (f.nome && f.nome.toLowerCase().includes(termo)) ||
       (f.empresa && f.empresa.toLowerCase().includes(termo)) ||
@@ -51,9 +60,8 @@ export default function FornecedorList() {
     setModoSelecao(false)
   }
 
-  // Função para buscar sugestões de tags conforme texto digitado
   const buscarSugestoes = async (texto) => {
-    if (texto.length < 2) { // Sugestões começam a partir de 2 caracteres
+    if (texto.length < 2) {
       setSugestoes([])
       setMostrarSugestoes(false)
       return
@@ -72,7 +80,6 @@ export default function FornecedorList() {
       return
     }
 
-    // Extrair todas tags dos fornecedores
     let tags = []
     if (tagsData) {
       tagsData.forEach(f => {
@@ -82,62 +89,47 @@ export default function FornecedorList() {
       })
     }
 
-    // Filtrar tags que contenham o texto digitado (ignorando case)
     const tagsFiltradas = [...new Set(tags)].filter(tag =>
       tag.toLowerCase().includes(texto.toLowerCase())
     )
 
-    // Adicionar # na frente se não tiver
     const tagsComHash = tagsFiltradas.map(t => (t.startsWith('#') ? t : `#${t}`))
 
     setSugestoes(tagsComHash)
     setMostrarSugestoes(true)
   }
 
-  // Atualizar fornecedores sempre que busca mudar
-  useEffect(() => {
-    buscarFornecedores()
-  }, [busca])
-
   const toggleModoSelecao = () => {
-    if (modoSelecao) {
-      setSelecionados(new Set())
-      setModoSelecao(false)
-    } else {
-      setModoSelecao(true)
-    }
+    setModoSelecao(!modoSelecao)
+    setSelecionados(new Set())
   }
 
   const toggleSelecionado = (id) => {
     const novosSelecionados = new Set(selecionados)
-    if (novosSelecionados.has(id)) {
-      novosSelecionados.delete(id)
-    } else {
-      novosSelecionados.add(id)
-    }
+    novosSelecionados.has(id) ? novosSelecionados.delete(id) : novosSelecionados.add(id)
     setSelecionados(novosSelecionados)
   }
 
   const copiarSelecionados = () => {
     if (selecionados.size === 0) return
 
-    const contatosParaCopiar = fornecedores
+    const contatos = fornecedores
       .filter(f => selecionados.has(f.id))
       .map(f => `Nome: ${f.nome}\nEmpresa: ${f.empresa}\nWhatsApp: ${f.whatsapp}`)
       .join('\n\n')
 
-    navigator.clipboard.writeText(contatosParaCopiar).then(() => {
+    navigator.clipboard.writeText(contatos).then(() => {
       setCopiadoId('multi')
       setTimeout(() => setCopiadoId(null), 2000)
-    }).catch(() => {})
+    })
   }
 
   const deletarSelecionados = async () => {
     if (selecionados.size === 0) return
-    if (!window.confirm(`Tem certeza que deseja excluir ${selecionados.size} fornecedor(es)?`)) return
+    if (!window.confirm(`Excluir ${selecionados.size} fornecedor(es)?`)) return
 
-    const idsArray = Array.from(selecionados)
-    const { error } = await supabase.from('fornecedores').delete().in('id', idsArray)
+    const ids = Array.from(selecionados)
+    const { error } = await supabase.from('fornecedores').delete().in('id', ids)
 
     if (error) {
       alert('Erro ao excluir: ' + error.message)
@@ -151,11 +143,7 @@ export default function FornecedorList() {
   const deletarFornecedor = async (id) => {
     if (!window.confirm('Tem certeza que deseja excluir?')) return
     const { error } = await supabase.from('fornecedores').delete().eq('id', id)
-    if (error) {
-      alert('Erro ao excluir: ' + error.message)
-    } else {
-      buscarFornecedores()
-    }
+    if (!error) buscarFornecedores()
   }
 
   const iniciarEdicao = (f) => {
@@ -191,9 +179,7 @@ export default function FornecedorList() {
       })
       .eq('id', id)
 
-    if (error) {
-      alert('Erro ao editar: ' + error.message)
-    } else {
+    if (!error) {
       cancelarEdicao()
       buscarFornecedores()
     }
@@ -204,7 +190,7 @@ export default function FornecedorList() {
     navigator.clipboard.writeText(texto).then(() => {
       setCopiadoId(f.id)
       setTimeout(() => setCopiadoId(null), 2000)
-    }).catch(() => {})
+    })
   }
 
   return (
@@ -225,12 +211,7 @@ export default function FornecedorList() {
           onBlur={() => setTimeout(() => setMostrarSugestoes(false), 150)}
         />
         {busca && (
-          <button
-            className="clear-button"
-            onClick={() => setBusca('')}
-            type="button"
-            title="Limpar busca"
-          >
+          <button className="clear-button" onClick={() => setBusca('')} type="button">
             ×
           </button>
         )}
@@ -238,14 +219,7 @@ export default function FornecedorList() {
         {mostrarSugestoes && sugestoes.length > 0 && (
           <ul className="tag-sugestoes">
             {sugestoes.map((tag, i) => (
-              <li
-                key={i}
-                className="tag-sugestao"
-                onMouseDown={() => {
-                  setBusca(tag)
-                  setMostrarSugestoes(false)
-                }}
-              >
+              <li key={i} className="tag-sugestao" onMouseDown={() => setBusca(tag)}>
                 {tag}
               </li>
             ))}
@@ -356,19 +330,26 @@ export default function FornecedorList() {
                     <br />
                     {f.empresa}
                     <br />
-                    <FaMobileAlt
-                      style={{ marginRight: 6, verticalAlign: 'middle', color: '#B197FC' }}
-                    />
-                    <a
-                      href={`https://wa.me/${f.whatsapp.replace(/\D/g, '')}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="fornecedor-whatsapp-link"
-                      style={{ color: '#196F3D' }}
-                    >
-                      {f.whatsapp}
-                    </a>
-                    <br />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginTop: 4 }}>
+                      <a
+                        href={`tel:${f.whatsapp.replace(/\D/g, '')}`}
+                        title="Ligar"
+                        style={{ color: '#00C48C' }}
+                      >
+                        <FaPhoneAlt />
+                      </a>
+                      <a
+                        href={`https://wa.me/${f.whatsapp.replace(/\D/g, '')}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title="WhatsApp"
+                        style={{ color: '#00C48C' }}
+                      >
+                        <FaWhatsapp />
+                      </a>
+                      <span>{f.whatsapp}</span>
+                    </div>
+                    
                     <FaTags
                       style={{ marginRight: 6, verticalAlign: 'middle', color: '#B197FC' }}
                     />
