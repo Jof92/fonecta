@@ -1,30 +1,15 @@
+/* Container principal do formulário */
 .fornecedor-form {
   max-width: 400px;
-  margin: 2rem auto;
-  padding: 16px;
+  padding: 13px 16px 10px 16px;
   background: #fff;
   display: flex;
   flex-direction: column;
   gap: 16px;
   font-family: 'Arial', sans-serif;
-  
 }
 
-.fornecedor-form .form-input {
-  width: 100%;
-  box-sizing: border-box;
-}
-
-
-.form-title {
-  font-size: 1.2rem;
-  font-weight: 600;
-  text-align: center;
-  color: #333;
-  margin-bottom: 8px;
-}
-
-/* Grupo de cada campo */
+/* Campos de entrada */
 .form-group {
   display: flex;
   flex-direction: column;
@@ -50,6 +35,39 @@
   border-bottom: 1px solid #007bff;
 }
 
+/* Grupo dos botões de seleção */
+.selection-group {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+  margin-top: -4px; /* aproxima do campo WhatsApp */
+  margin-bottom: -4px; /* aproxima do campo hashtag */
+}
+
+.selection-button {
+  flex: 1;
+  padding: 6px 4px;
+  font-size: 0.75rem; /* fonte menor */
+  border: 1px solid #ccc;
+  background: #f8f8f8;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.selection-button:hover {
+  background: #eee;
+}
+
+/* Quando selecionado */
+.selection-button.selected {
+  background: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+/* Botão de envio */
 .form-button {
   margin-top: 8px;
   padding: 10px;

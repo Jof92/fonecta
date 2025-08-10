@@ -7,6 +7,7 @@ export default function FornecedorForm({ mostrarTitulo = true, onCadastroFinaliz
   const [nome, setNome] = useState('')
   const [empresa, setEmpresa] = useState('')
   const [whatsapp, setWhatsapp] = useState('')
+  const [tipoFornecedor, setTipoFornecedor] = useState('servico') // novo estado para seleção
   const [tags, setTags] = useState('')
   const [todasTags, setTodasTags] = useState([])
   const [sugestoes, setSugestoes] = useState([])
@@ -127,6 +128,7 @@ export default function FornecedorForm({ mostrarTitulo = true, onCadastroFinaliz
       nome,
       empresa,
       whatsapp: whatsappFormatado,
+      tipo: tipoFornecedor,  // incluir tipo selecionado no cadastro
       tags: tagsArray,
     }])
 
@@ -137,6 +139,7 @@ export default function FornecedorForm({ mostrarTitulo = true, onCadastroFinaliz
       setNome('')
       setEmpresa('')
       setWhatsapp('')
+      setTipoFornecedor('servico')
       setTags('')
       setSugestoes([])
       setSugestaoSelecionada(-1)
@@ -189,6 +192,34 @@ export default function FornecedorForm({ mostrarTitulo = true, onCadastroFinaliz
           placeholder="DDD + Telefone"
           required
         />
+
+        {/* Grupo de botões de seleção */}
+        <div className="selection-group" role="radiogroup" aria-label="Tipo de Fornecedor">
+          <button
+            type="button"
+            className={`selection-button ${tipoFornecedor === 'servico' ? 'selected' : ''}`}
+            onClick={() => setTipoFornecedor('servico')}
+            aria-pressed={tipoFornecedor === 'servico'}
+          >
+            Serviço
+          </button>
+          <button
+            type="button"
+            className={`selection-button ${tipoFornecedor === 'material' ? 'selected' : ''}`}
+            onClick={() => setTipoFornecedor('material')}
+            aria-pressed={tipoFornecedor === 'material'}
+          >
+            Material
+          </button>
+          <button
+            type="button"
+            className={`selection-button ${tipoFornecedor === 'material_servico' ? 'selected' : ''}`}
+            onClick={() => setTipoFornecedor('material_servico')}
+            aria-pressed={tipoFornecedor === 'material_servico'}
+          >
+            Material e Serviço
+          </button>
+        </div>
 
         <label className="form-label">Hashtags:</label>
         <div style={{ position: 'relative' }}>

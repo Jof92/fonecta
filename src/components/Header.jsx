@@ -6,8 +6,17 @@ import { BsPerson } from 'react-icons/bs'
 import { supabase } from '../supabaseClient'
 import logoFonecta from '../assets/fonect.png'
 import logoParceiraDefault from '../assets/parceira.png'
+import { ReactComponent as GearIcon } from '../assets/icon/gear.svg'
 
-export default function Header({ mostrarLogin, setMostrarLogin, reports = [], user, setUser }) {
+export default function Header({
+  mostrarLogin,
+  setMostrarLogin,
+  reports = [],
+  user,
+  setUser,
+  tema,
+  setTema
+}) {
   const location = useLocation()
   const navigate = useNavigate()
   const pathname = location.pathname
@@ -19,6 +28,8 @@ export default function Header({ mostrarLogin, setMostrarLogin, reports = [], us
 
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
   const [loginAtivo, setLoginAtivo] = useState(false)
+
+  const [menuAbertoTema, setMenuAbertoTema] = useState(false)
 
   useEffect(() => {
     function handleResize() {
@@ -36,6 +47,7 @@ export default function Header({ mostrarLogin, setMostrarLogin, reports = [], us
 
   const menuRef = useRef(null)
   const reportsRef = useRef(null)
+  const gearRef = useRef(null)
   const inputFileRef = useRef(null)
 
   const [logoParceira, setLogoParceira] = useState(user?.logo_parceira_url || logoParceiraDefault)
@@ -54,14 +66,17 @@ export default function Header({ mostrarLogin, setMostrarLogin, reports = [], us
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setMostrarMenuLogo(false)
       }
+      if (gearRef.current && !gearRef.current.contains(event.target)) {
+        setMenuAbertoTema(false)
+      }
     }
-    if (mostrarMenuLogo) {
+    if (mostrarMenuLogo || menuAbertoTema) {
       document.addEventListener('mousedown', handleClickOutside)
     }
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
-  }, [mostrarMenuLogo])
+  }, [mostrarMenuLogo, menuAbertoTema])
 
   useEffect(() => {
     function handleClickOutsideReport(event) {
@@ -166,6 +181,13 @@ export default function Header({ mostrarLogin, setMostrarLogin, reports = [], us
 
   const corIcone = mensagensNaoLidas.length > 0 ? '#004a99' : '#4a90e2'
 
+  const gearColors = {
+    default: '#888',
+    black: '#00C48C',
+    purple: '#00C48C',
+    darkblue: '#00C48C',
+  }
+
   return (
     <header className="app-header" style={{ position: 'relative', zIndex: 10 }}>
       <div className="header-left" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
@@ -175,6 +197,94 @@ export default function Header({ mostrarLogin, setMostrarLogin, reports = [], us
 
       {!estaNoCadastroExterno && (
         <div className="header-right" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          {(estaNaAdmin || estaNaBusca) && (
+            <div
+              ref={gearRef}
+              style={{
+                position: 'relative',
+                display: 'flex',
+                alignItems: 'center',
+                cursor: 'pointer',
+                userSelect: 'none'
+              }}
+            >
+              <button
+                onClick={() => setMenuAbertoTema((aberto) => !aberto)}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  padding: 0,
+                  width: '36px',
+                  height: '36px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'filter 0.3s',
+                  filter: menuAbertoTema
+                    ? 'drop-shadow(0 0 8px #00C48C)'
+                    : 'none',
+                }}
+                aria-label="Abrir menu de temas"
+                title="Alterar tema de fundo"
+                type="button"
+              >
+                <GearIcon
+                  style={{
+                    width: '24px',
+                    height: '24px',
+                    fill: gearColors[tema] || '#888',
+                    transition: 'fill 0.3s',
+                  }}
+                />
+              </button>
+
+              {menuAbertoTema && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: 'calc(100% + 8px)',
+                    right: 0,
+                    backgroundColor: '#222',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 8px rgba(0,0,0,0.3)',
+                    padding: '0.5rem 0',
+                    minWidth: '140px',
+                    color: 'white',
+                    fontSize: '0.9rem',
+                    zIndex: 1100,
+                  }}
+                >
+                  {['default', 'black', 'purple', 'darkblue'].map((id) => (
+                    <div
+                      key={id}
+                      onClick={() => {
+                        setTema(id)
+                        setMenuAbertoTema(false)
+                      }}
+                      style={{
+                        padding: '0.5rem 1rem',
+                        cursor: 'pointer',
+                        backgroundColor: tema === id ? '#00C48C' : 'transparent',
+                        color: tema === id ? 'black' : 'white',
+                        fontWeight: tema === id ? '700' : 'normal',
+                      }}
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={e => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          setTema(id)
+                          setMenuAbertoTema(false)
+                        }
+                      }}
+                    >
+                      {id.charAt(0).toUpperCase() + id.slice(1)}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
           {estaNaAdmin && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', position: 'relative' }}>
               <button

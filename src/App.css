@@ -1,15 +1,4 @@
-/* Fundo com degradê animado */
-.app-container {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background: linear-gradient(135deg, #009DFF, #00B8D9, #00C48C);
-  background-size: 400% 400%;
-  animation: gradientMove 15s ease infinite;
-  overflow-x: hidden;
-}
-
-/* Animação do fundo */
+/* keyframes para animação compartilhada */
 @keyframes gradientMove {
   0% {
     background-position: 0% 50%;
@@ -20,6 +9,42 @@
   100% {
     background-position: 0% 50%;
   }
+}
+
+/* tema padrão */
+.tema-default {
+  background: linear-gradient(135deg, #009DFF, #00B8D9, #00C48C);
+  background-size: 400% 400%;
+  animation: gradientMove 15s ease infinite;
+}
+
+/* tema black */
+.tema-black {
+  background: linear-gradient(135deg, #000000, #333333, #666666);
+  background-size: 400% 400%;
+  animation: gradientMove 5s ease infinite;
+}
+
+/* tema purple */
+.tema-purple {
+  background: linear-gradient(135deg, #4B0082, #8A2BE2, #FF69B4);
+  background-size: 400% 400%;
+  animation: gradientMove 15s ease infinite;
+}
+
+/* tema dark blue */
+.tema-darkblue {
+  background: linear-gradient(135deg, #001F3F, #0074D9, #7FDBFF);
+  background-size: 400% 400%;
+  animation: gradientMove 5s ease infinite;
+}
+
+/* Aplicar a estilização base do app-container */
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
 }
 
 /* Animação suave de fade-in e subida */

@@ -314,6 +314,20 @@
   padding: 1px 5px;
 }
 
+.icone-tipo {
+  width: 20px;      /* largura do ícone */
+  height: 20px;     /* altura do ícone */
+  vertical-align: middle; /* alinhamento vertical com o texto */
+  margin-right: 6px; /* espaço entre ícone e texto/elementos próximos */
+  fill: #B197FC;    /* cor do ícone (ajuste conforme desejar) */
+  flex-shrink: 0;   /* evitar que o ícone encolha em flex containers */
+}
+.btn.selecionado {
+  background-color: #28a745;
+  color: white;
+}
+
+
 @media (max-width: 768px) {
   .fornecedor-list-container {
     width: auto;

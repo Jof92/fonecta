@@ -12,6 +12,10 @@ import { VscVerified } from 'react-icons/vsc'
 import './FornecedorList.css'
 import EmptyState from './EmptyState'
 
+import { ReactComponent as IconSerrote } from '../assets/icon/hand-saw-svgrepo-com.svg'
+import { ReactComponent as IconManhand } from '../assets/icon/manhand.svg'
+import { ReactComponent as IconServico } from '../assets/icon/service.svg'
+
 export default function FornecedorList() {
   const [busca, setBusca] = useState('')
   const [fornecedores, setFornecedores] = useState([])
@@ -20,7 +24,8 @@ export default function FornecedorList() {
     nome: '',
     empresa: '',
     whatsapp: '',
-    tags: ''
+    tags: '',
+    tipo: '' // novo campo
   })
 
   const [modoSelecao, setModoSelecao] = useState(false)
@@ -35,7 +40,6 @@ export default function FornecedorList() {
 
   const buscarFornecedores = async () => {
     const { data, error } = await supabase.from('fornecedores').select('*')
-
     if (error) {
       console.error('Erro ao buscar fornecedores:', error)
       return
@@ -152,7 +156,8 @@ export default function FornecedorList() {
       nome: f.nome,
       empresa: f.empresa,
       whatsapp: f.whatsapp,
-      tags: f.tags?.join(' ') || ''
+      tags: f.tags?.join(' ') || '',
+      tipo: f.tipo || ''
     })
     setModoSelecao(false)
     setSelecionados(new Set())
@@ -160,7 +165,7 @@ export default function FornecedorList() {
 
   const cancelarEdicao = () => {
     setEditando(null)
-    setForm({ nome: '', empresa: '', whatsapp: '', tags: '' })
+    setForm({ nome: '', empresa: '', whatsapp: '', tags: '', tipo: '' })
   }
 
   const salvarEdicao = async (id) => {
@@ -175,7 +180,8 @@ export default function FornecedorList() {
         nome: form.nome,
         empresa: form.empresa,
         whatsapp: form.whatsapp,
-        tags: tagsArray
+        tags: tagsArray,
+        tipo: form.tipo
       })
       .eq('id', id)
 
@@ -191,6 +197,21 @@ export default function FornecedorList() {
       setCopiadoId(f.id)
       setTimeout(() => setCopiadoId(null), 2000)
     })
+  }
+
+  const escolherIconePorTipo = (tipo) => {
+    if (!tipo) return null
+    const t = tipo.toLowerCase()
+    if (t.includes('material') && t.includes('servico')) {
+      return <IconManhand className="icone-tipo" title="Material e Serviço" />
+    }
+    if (t.includes('material')) {
+      return <IconSerrote className="icone-tipo" title="Material" />
+    }
+    if (t.includes('servico')) {
+      return <IconServico className="icone-tipo" title="Serviço" />
+    }
+    return null
   }
 
   return (
@@ -294,7 +315,32 @@ export default function FornecedorList() {
                     onChange={(e) => setForm({ ...form, tags: e.target.value })}
                     placeholder="#tags"
                   />
-                  <br />
+
+                  {/* Botões de tipo */}
+                  <div style={{ marginTop: '8px', display: 'flex', gap: '8px' }}>
+                    <button
+                      type="button"
+                      className={`btn ${form.tipo === 'servico' ? 'selecionado' : ''}`}
+                      onClick={() => setForm({ ...form, tipo: 'servico' })}
+                    >
+                      Serviço
+                    </button>
+                    <button
+                      type="button"
+                      className={`btn ${form.tipo === 'material' ? 'selecionado' : ''}`}
+                      onClick={() => setForm({ ...form, tipo: 'material' })}
+                    >
+                      Material
+                    </button>
+                    <button
+                      type="button"
+                      className={`btn ${form.tipo === 'material e servico' ? 'selecionado' : ''}`}
+                      onClick={() => setForm({ ...form, tipo: 'material e servico' })}
+                    >
+                      Material e Serviço
+                    </button>
+                  </div>
+
                   <div className="edit-buttons">
                     <button className="btn salvar" onClick={() => salvarEdicao(f.id)}>
                       Salvar
@@ -330,7 +376,15 @@ export default function FornecedorList() {
                     <br />
                     {f.empresa}
                     <br />
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginTop: 4 }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        flexWrap: 'wrap',
+                        marginTop: 4
+                      }}
+                    >
                       <a
                         href={`tel:${f.whatsapp.replace(/\D/g, '')}`}
                         title="Ligar"
@@ -349,20 +403,28 @@ export default function FornecedorList() {
                       </a>
                       <span>{f.whatsapp}</span>
                     </div>
-                    
-                    <FaTags
-                      style={{ marginRight: 6, verticalAlign: 'middle', color: '#B197FC' }}
-                    />
-                    {f.tags?.map((tag) => (
-                      <button
-                        key={tag}
-                        className="tag-button"
-                        onClick={() => setBusca(tag)}
-                        type="button"
-                      >
-                        {tag}
-                      </button>
-                    ))}
+
+                    <div
+                      className="icone-tags-wrapper"
+                      style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 8, flexWrap: 'wrap' }}
+                    >
+                      {escolherIconePorTipo(f.tipo) || (
+                        <FaTags
+                          style={{ color: '#B197FC', verticalAlign: 'middle' }}
+                          title="Tags"
+                        />
+                      )}
+                      {f.tags?.map((tag) => (
+                        <button
+                          key={tag}
+                          className="tag-button"
+                          onClick={() => setBusca(tag)}
+                          type="button"
+                        >
+                          {tag}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                   {!modoSelecao && (
                     <div className="fornecedor-actions">
