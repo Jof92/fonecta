@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../supabaseClient';
 import { FaCopy, FaTags, FaPhoneAlt, FaWhatsapp } from 'react-icons/fa';
+import { MdManageAccounts, MdOutlineHandyman } from 'react-icons/md';
+import { VscVerified } from 'react-icons/vsc'; // Coopercon
+import WorkerIcon from '../assets/icon/worker.svg'; // Material + Serviço
+import QualifiosLogo from '../assets/icon/logo-qualifio-bkp.png'; // Qualifios
 import './BuscaPage.css';
 import EmptyState from './EmptyState';
+import LegendaIcones from './legendaIcones';
 
 export default function FornecedorListBusca({ adicionarReport, nomeUsuarioLogado = 'Usuário' }) {
   const [busca, setBusca] = useState('');
@@ -11,8 +16,15 @@ export default function FornecedorListBusca({ adicionarReport, nomeUsuarioLogado
   const [sugestoes, setSugestoes] = useState([]);
   const [mostrarSugestoes, setMostrarSugestoes] = useState(false);
   const [marcados, setMarcados] = useState(new Set());
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
-  // Buscar fornecedores filtrando por busca
+  // Atualiza isMobile ao redimensionar
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const buscarFornecedores = async () => {
     const { data, error } = await supabase.from('fornecedores').select('*');
     if (error) return console.error('Erro ao buscar fornecedores:', error);
@@ -31,7 +43,6 @@ export default function FornecedorListBusca({ adicionarReport, nomeUsuarioLogado
     setFornecedores(filtrados);
   };
 
-  // Buscar sugestões de tags a partir do texto digitado
   const buscarSugestoes = async (texto) => {
     if (texto.length < 2) {
       setMostrarSugestoes(false);
@@ -60,12 +71,10 @@ export default function FornecedorListBusca({ adicionarReport, nomeUsuarioLogado
     setMostrarSugestoes(true);
   };
 
-  // Atualiza a lista de fornecedores sempre que o texto de busca mudar
   useEffect(() => {
     buscarFornecedores();
   }, [busca]);
 
-  // Função para copiar dados do contato para a área de transferência
   const copiarContato = (f) => {
     const texto = `Nome: ${f.nome}\nEmpresa: ${f.empresa}\nWhatsApp: ${f.whatsapp}`;
     navigator.clipboard.writeText(texto).then(() => {
@@ -74,16 +83,12 @@ export default function FornecedorListBusca({ adicionarReport, nomeUsuarioLogado
     });
   };
 
-  // Marca ou desmarca contato e registra relatório se função passada por props existir
   const toggleMarcado = (f) => {
     const novo = new Set(marcados);
     if (novo.has(f.id)) {
       novo.delete(f.id);
-      setMarcados(novo);
     } else {
       novo.add(f.id);
-      setMarcados(novo);
-
       if (adicionarReport) {
         adicionarReport({
           id: `${f.id}-${Date.now()}`,
@@ -92,17 +97,46 @@ export default function FornecedorListBusca({ adicionarReport, nomeUsuarioLogado
         });
       }
     }
+    setMarcados(novo);
   };
 
-  // Manipula clique em sugestão para preencher o input e esconder sugestões
   const selecionarSugestao = (tag) => {
     setBusca(tag);
     setMostrarSugestoes(false);
   };
 
+  const escolherIconePorTipo = (f) => {
+    switch(f.tipo?.toLowerCase()) {
+      case 'serviço':
+      case 'servico':
+        return <MdManageAccounts style={{ width: 20, height: 20, color: '#B197FC', marginRight: 4 }} title="Serviço" />;
+      case 'material':
+        return <MdOutlineHandyman style={{ width: 20, height: 20, color: '#B197FC', marginRight: 4 }} title="Material" />;
+      case 'material e servico':
+      case 'material+servico':
+        return (
+          <img 
+            src={WorkerIcon} 
+            alt="Material e Serviço" 
+            style={{ 
+              width: 20, 
+              height: 20, 
+              marginRight: 4, 
+              filter: 'invert(49%) sepia(32%) saturate(2661%) hue-rotate(196deg) brightness(93%) contrast(91%)' 
+            }} 
+          />
+        );
+      default:
+        return <FaTags style={{ color: '#B197FC', marginRight: 4 }} />;
+    }
+  };
+
   return (
     <div className="pagina-busca">
-      <h2>Buscar Fornecedores</h2>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent:'space-between' }}>
+        <h2>Buscar Fornecedores</h2>
+        <LegendaIcones />
+      </div>
 
       <div className="search-input-wrapper" style={{ position: 'relative' }}>
         <input
@@ -128,20 +162,9 @@ export default function FornecedorListBusca({ adicionarReport, nomeUsuarioLogado
           </button>
         )}
         {mostrarSugestoes && sugestoes.length > 0 && (
-          <ul
-            id="tag-sugestoes-list"
-            className="tag-sugestoes"
-            role="listbox"
-            aria-label="Sugestões de tags"
-          >
+          <ul id="tag-sugestoes-list" className="tag-sugestoes" role="listbox" aria-label="Sugestões de tags">
             {sugestoes.map((tag, i) => (
-              <li
-                key={i}
-                className="tag-sugestao"
-                role="option"
-                tabIndex={-1}
-                onMouseDown={() => selecionarSugestao(tag)}
-              >
+              <li key={i} className="tag-sugestao" role="option" tabIndex={-1} onMouseDown={() => selecionarSugestao(tag)}>
                 {tag}
               </li>
             ))}
@@ -157,59 +180,37 @@ export default function FornecedorListBusca({ adicionarReport, nomeUsuarioLogado
             .map((f) => (
               <li key={f.id} className={`fornecedor-item ${marcados.has(f.id) ? 'marcado' : ''}`}>
                 <div className="fornecedor-info">
-                  <strong>{f.nome}</strong> — {f.empresa}
-                  <br />
-                  <div
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      whiteSpace: 'nowrap',
-                      marginTop: '4px'
-                    }}
-                  >
-                    <a
-                      href={`tel:${f.whatsapp.replace(/\D/g, '')}`}
-                      title="Ligar"
-                      style={{ color: '#00C48C', fontSize: '1.1rem' }}
-                    >
-                      <FaPhoneAlt />
-                    </a>
-                    <a
-                      href={`https://wa.me/${f.whatsapp.replace(/\D/g, '')}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      title="WhatsApp"
-                      style={{ color: '#00C48C', fontSize: '1.1rem' }}
-                    >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <strong>{f.nome}</strong>
+                    {f.coopercon && <VscVerified style={{ color: 'rgb(40, 167, 69)', width: 20, height: 20 }} title="Coopercon" />}
+                    {f.qualifios && <img src={QualifiosLogo} alt="Qualifios" style={{ width: 20, height: 20 }} title="Qualifios" />}
+                  </div>
+                  <div>{f.empresa}</div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4 }}>
+                    {isMobile && (
+                      <a href={`tel:${f.whatsapp.replace(/\D/g, '')}`} title="Ligar" style={{ color: '#00C48C' }}>
+                        <FaPhoneAlt />
+                      </a>
+                    )}
+                    <a href={`https://wa.me/${f.whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" title="WhatsApp" style={{ color: '#00C48C' }}>
                       <FaWhatsapp />
                     </a>
-                    <span style={{ fontWeight: 'bold', color: '#333' }}>
-                      {f.whatsapp}
-                    </span>
+                    <span style={{ fontWeight: 'bold', color: '#333' }}>{f.whatsapp}</span>
                   </div>
-                  <br />
-                  <FaTags style={{ color: '#B197FC', marginRight: 6 }} />
-                  {f.tags?.map((tag) => (
-                    <button
-                      key={tag}
-                      className="tag-button"
-                      onClick={() => setBusca(tag)}
-                      type="button"
-                    >
-                      {tag}
-                    </button>
-                  ))}
-                  {marcados.has(f.id) && (
-                    <div className="marcado-alerta">Contato com erro ou inexistente</div>
-                  )}
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 4, flexWrap: 'wrap' }}>
+                    {escolherIconePorTipo(f)}
+                    {f.tags?.map((tag) => (
+                      <button key={tag} className="tag-button" onClick={() => setBusca(tag)} type="button">{tag}</button>
+                    ))}
+                  </div>
+
+                  {marcados.has(f.id) && <div className="marcado-alerta">Contato com erro ou inexistente</div>}
                 </div>
+
                 <div className="fornecedor-actions">
-                  <FaCopy
-                    className={`action-icon ${copiadoId === f.id ? 'copied' : ''}`}
-                    title="Copiar contato"
-                    onClick={() => copiarContato(f)}
-                  />
+                  <FaCopy className={`action-icon ${copiadoId === f.id ? 'copied' : ''}`} title="Copiar contato" onClick={() => copiarContato(f)} />
                   <span
                     className={`checkbox-problema ${marcados.has(f.id) ? 'checked' : ''}`}
                     onClick={() => toggleMarcado(f)}
@@ -233,9 +234,7 @@ export default function FornecedorListBusca({ adicionarReport, nomeUsuarioLogado
         </ul>
       </div>
 
-      <p className="fornecedor-quantidade">
-        Total de fornecedores exibidos: {fornecedores.length}
-      </p>
+      <p className="fornecedor-quantidade">Total de fornecedores exibidos: {fornecedores.length}</p>
     </div>
   );
 }

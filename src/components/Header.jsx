@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { FaEnvelope, FaArrowLeft } from 'react-icons/fa'
 import { BsPerson } from 'react-icons/bs'
-
 import { supabase } from '../supabaseClient'
 import logoFonecta from '../assets/fonect.png'
 import logoParceiraDefault from '../assets/parceira.png'
@@ -28,18 +27,8 @@ export default function Header({
 
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
   const [loginAtivo, setLoginAtivo] = useState(false)
-
   const [menuAbertoTema, setMenuAbertoTema] = useState(false)
 
-  useEffect(() => {
-    function handleResize() {
-      setIsMobile(window.innerWidth < 768)
-    }
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
-
-  // Estados e refs para reports e menu logo
   const [mostrarBoxReports, setMostrarBoxReports] = useState(false)
   const [reportSelecionado, setReportSelecionado] = useState(null)
   const [idsLidos, setIdsLidos] = useState(new Set())
@@ -53,6 +42,14 @@ export default function Header({
   const [logoParceira, setLogoParceira] = useState(user?.logo_parceira_url || logoParceiraDefault)
 
   useEffect(() => {
+    function handleResize() {
+      setIsMobile(window.innerWidth < 768)
+    }
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  useEffect(() => {
     if (user?.logo_parceira_url) {
       setLogoParceira(user.logo_parceira_url + `?t=${new Date().getTime()}`)
     } else {
@@ -60,7 +57,7 @@ export default function Header({
     }
   }, [user?.logo_parceira_url])
 
-  // Fechar menus ao clicar fora
+  // Fecha menus ao clicar fora
   useEffect(() => {
     function handleClickOutside(event) {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -73,9 +70,7 @@ export default function Header({
     if (mostrarMenuLogo || menuAbertoTema) {
       document.addEventListener('mousedown', handleClickOutside)
     }
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
+    return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [mostrarMenuLogo, menuAbertoTema])
 
   useEffect(() => {
@@ -87,9 +82,7 @@ export default function Header({
     if (mostrarBoxReports) {
       document.addEventListener('mousedown', handleClickOutsideReport)
     }
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutsideReport)
-    }
+    return () => document.removeEventListener('mousedown', handleClickOutsideReport)
   }, [mostrarBoxReports])
 
   const mensagensNaoLidas = reports.filter(r => !idsLidos.has(r.id))
@@ -169,9 +162,7 @@ export default function Header({
   }
 
   function abrirSeletorArquivos() {
-    if (inputFileRef.current) {
-      inputFileRef.current.click()
-    }
+    if (inputFileRef.current) inputFileRef.current.click()
   }
 
   function toggleLogin() {
@@ -180,13 +171,6 @@ export default function Header({
   }
 
   const corIcone = mensagensNaoLidas.length > 0 ? '#004a99' : '#4a90e2'
-
-  const gearColors = {
-    default: '#888',
-    black: '#00C48C',
-    purple: '#00C48C',
-    darkblue: '#00C48C',
-  }
 
   return (
     <header className="app-header" style={{ position: 'relative', zIndex: 10 }}>
@@ -200,42 +184,26 @@ export default function Header({
           {(estaNaAdmin || estaNaBusca) && (
             <div
               ref={gearRef}
-              style={{
-                position: 'relative',
-                display: 'flex',
-                alignItems: 'center',
-                cursor: 'pointer',
-                userSelect: 'none'
-              }}
+              style={{ position: 'relative', display: 'flex', alignItems: 'center', cursor: 'pointer', userSelect: 'none' }}
             >
               <button
-                onClick={() => setMenuAbertoTema((aberto) => !aberto)}
+                onClick={() => setMenuAbertoTema(prev => !prev)}
                 style={{
                   background: 'transparent',
                   border: 'none',
-                  padding: 0,
                   width: '36px',
                   height: '36px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   transition: 'filter 0.3s',
-                  filter: menuAbertoTema
-                    ? 'drop-shadow(0 0 8px #00C48C)'
-                    : 'none',
+                  filter: menuAbertoTema ? 'drop-shadow(0 0 8px #00C48C)' : 'none'
                 }}
                 aria-label="Abrir menu de temas"
                 title="Alterar tema de fundo"
                 type="button"
               >
-                <GearIcon
-                  style={{
-                    width: '24px',
-                    height: '24px',
-                    fill: gearColors[tema] || '#888',
-                    transition: 'fill 0.3s',
-                  }}
-                />
+                <GearIcon style={{ width: '24px', height: '24px', stroke: corIcone, transition: 'fill 0.3s' }} />
               </button>
 
               {menuAbertoTema && (
@@ -244,14 +212,14 @@ export default function Header({
                     position: 'absolute',
                     top: 'calc(100% + 8px)',
                     right: 0,
-                    backgroundColor: '#222',
+                    backgroundColor: '#5e2e8c',
                     borderRadius: '8px',
                     boxShadow: '0 4px 8px rgba(0,0,0,0.3)',
                     padding: '0.5rem 0',
                     minWidth: '140px',
                     color: 'white',
                     fontSize: '0.9rem',
-                    zIndex: 1100,
+                    zIndex: 1100
                   }}
                 >
                   {['default', 'black', 'purple', 'darkblue'].map((id) => (
@@ -264,10 +232,13 @@ export default function Header({
                       style={{
                         padding: '0.5rem 1rem',
                         cursor: 'pointer',
-                        backgroundColor: tema === id ? '#00C48C' : 'transparent',
-                        color: tema === id ? 'black' : 'white',
+                        backgroundColor: tema === id ? '#452075' : 'transparent',
+                        color: 'white',
                         fontWeight: tema === id ? '700' : 'normal',
+                        transition: 'background-color 0.2s'
                       }}
+                      onMouseEnter={e => e.currentTarget.style.backgroundColor = '#7c3aed'}
+                      onMouseLeave={e => e.currentTarget.style.backgroundColor = tema === id ? '#452075' : 'transparent'}
                       role="button"
                       tabIndex={0}
                       onKeyDown={e => {
@@ -285,6 +256,7 @@ export default function Header({
             </div>
           )}
 
+          {/* Mensagens e logo parceira */}
           {estaNaAdmin && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', position: 'relative' }}>
               <button
@@ -360,10 +332,7 @@ export default function Header({
                   </button>
                   <hr style={{ margin: 0 }} />
                   <button
-                    onClick={() => {
-                      setMostrarMenuLogo(false)
-                      sair()
-                    }}
+                    onClick={sair}
                     style={{
                       width: '100%',
                       padding: '10px 12px',
@@ -389,6 +358,7 @@ export default function Header({
             </div>
           )}
 
+          {/* Página Busca */}
           {estaNaBusca && (
             <div style={{ position: 'relative' }}>
               <img
@@ -415,10 +385,7 @@ export default function Header({
                   }}
                 >
                   <button
-                    onClick={() => {
-                      setMostrarMenuLogo(false)
-                      sair()
-                    }}
+                    onClick={sair}
                     style={{
                       width: '100%',
                       padding: '10px 12px',
@@ -437,6 +404,7 @@ export default function Header({
             </div>
           )}
 
+          {/* Página Home */}
           {estaNaHome && (
             <button
               onClick={toggleLogin}
@@ -460,6 +428,7 @@ export default function Header({
         </div>
       )}
 
+      {/* Box Reports */}
       {mostrarBoxReports && estaNaAdmin && (
         <div
           ref={reportsRef}

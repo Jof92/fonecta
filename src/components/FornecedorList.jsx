@@ -9,12 +9,12 @@ import {
   FaWhatsapp
 } from 'react-icons/fa'
 import { VscVerified } from 'react-icons/vsc'
+import { MdManageAccounts, MdOutlineHandyman } from 'react-icons/md'
 import './FornecedorList.css'
 import EmptyState from './EmptyState'
-
-import { ReactComponent as IconSerrote } from '../assets/icon/hand-saw-svgrepo-com.svg'
-import { ReactComponent as IconManhand } from '../assets/icon/manhand.svg'
-import { ReactComponent as IconServico } from '../assets/icon/service.svg'
+import LogoQualifios from '../assets/icon/logo-qualifio-bkp.png'
+import { ReactComponent as IconWorker } from '../assets/icon/worker.svg'
+import LegendaIcones from './legendaIcones' // botão da legenda de ícones
 
 export default function FornecedorList() {
   const [busca, setBusca] = useState('')
@@ -25,14 +25,22 @@ export default function FornecedorList() {
     empresa: '',
     whatsapp: '',
     tags: '',
-    tipo: '' // novo campo
+    tipo: '',
+    coopercon: false,
+    qualifios: false
   })
-
   const [modoSelecao, setModoSelecao] = useState(false)
   const [selecionados, setSelecionados] = useState(new Set())
   const [copiadoId, setCopiadoId] = useState(null)
   const [sugestoes, setSugestoes] = useState([])
   const [mostrarSugestoes, setMostrarSugestoes] = useState(false)
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768)
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   useEffect(() => {
     buscarFornecedores()
@@ -40,10 +48,7 @@ export default function FornecedorList() {
 
   const buscarFornecedores = async () => {
     const { data, error } = await supabase.from('fornecedores').select('*')
-    if (error) {
-      console.error('Erro ao buscar fornecedores:', error)
-      return
-    }
+    if (error) return console.error('Erro ao buscar fornecedores:', error)
 
     if (busca.trim() === '') {
       setFornecedores(data)
@@ -98,7 +103,6 @@ export default function FornecedorList() {
     )
 
     const tagsComHash = tagsFiltradas.map(t => (t.startsWith('#') ? t : `#${t}`))
-
     setSugestoes(tagsComHash)
     setMostrarSugestoes(true)
   }
@@ -116,12 +120,10 @@ export default function FornecedorList() {
 
   const copiarSelecionados = () => {
     if (selecionados.size === 0) return
-
     const contatos = fornecedores
       .filter(f => selecionados.has(f.id))
       .map(f => `Nome: ${f.nome}\nEmpresa: ${f.empresa}\nWhatsApp: ${f.whatsapp}`)
       .join('\n\n')
-
     navigator.clipboard.writeText(contatos).then(() => {
       setCopiadoId('multi')
       setTimeout(() => setCopiadoId(null), 2000)
@@ -131,13 +133,9 @@ export default function FornecedorList() {
   const deletarSelecionados = async () => {
     if (selecionados.size === 0) return
     if (!window.confirm(`Excluir ${selecionados.size} fornecedor(es)?`)) return
-
     const ids = Array.from(selecionados)
     const { error } = await supabase.from('fornecedores').delete().in('id', ids)
-
-    if (error) {
-      alert('Erro ao excluir: ' + error.message)
-    } else {
+    if (!error) {
       setSelecionados(new Set())
       setModoSelecao(false)
       buscarFornecedores()
@@ -157,7 +155,9 @@ export default function FornecedorList() {
       empresa: f.empresa,
       whatsapp: f.whatsapp,
       tags: f.tags?.join(' ') || '',
-      tipo: f.tipo || ''
+      tipo: f.tipo || '',
+      coopercon: f.coopercon || false,
+      qualifios: f.qualifios || false
     })
     setModoSelecao(false)
     setSelecionados(new Set())
@@ -165,7 +165,7 @@ export default function FornecedorList() {
 
   const cancelarEdicao = () => {
     setEditando(null)
-    setForm({ nome: '', empresa: '', whatsapp: '', tags: '', tipo: '' })
+    setForm({ nome: '', empresa: '', whatsapp: '', tags: '', tipo: '', coopercon: false, qualifios: false })
   }
 
   const salvarEdicao = async (id) => {
@@ -181,7 +181,9 @@ export default function FornecedorList() {
         empresa: form.empresa,
         whatsapp: form.whatsapp,
         tags: tagsArray,
-        tipo: form.tipo
+        tipo: form.tipo,
+        coopercon: form.coopercon,
+        qualifios: form.qualifios
       })
       .eq('id', id)
 
@@ -200,24 +202,34 @@ export default function FornecedorList() {
   }
 
   const escolherIconePorTipo = (tipo) => {
-    if (!tipo) return null
+    if (!tipo) return <FaTags style={{ color: '#B197FC' }} title="Tags" />
     const t = tipo.toLowerCase()
-    if (t.includes('material') && t.includes('servico')) {
-      return <IconManhand className="icone-tipo" title="Material e Serviço" />
-    }
-    if (t.includes('material')) {
-      return <IconSerrote className="icone-tipo" title="Material" />
-    }
-    if (t.includes('servico')) {
-      return <IconServico className="icone-tipo" title="Serviço" />
-    }
-    return null
+    if (t.includes('material') && t.includes('servico'))
+      return <IconWorker style={{ width: 20, height: 20, color: '#B197FC' }} title="Material e Serviço" />
+    if (t.includes('material'))
+      return <MdOutlineHandyman style={{ width: 20, height: 20, color: '#B197FC' }} title="Material" />
+    if (t.includes('servico'))
+      return <MdManageAccounts style={{ width: 20, height: 20, color: '#B197FC' }} title="Serviço" />
+    return <FaTags style={{ color: '#B197FC' }} title="Tags" />
   }
 
   return (
     <div className="fornecedor-wrapper">
-      <h2>Buscar Fornecedores</h2>
+      {/* Título com botão de legenda */}
+      <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            marginBottom: '0.5rem',
+            justifyContent: 'space-between',
+          }}
+        >
+        <h2 style={{ margin: 0 }}>Buscar Fornecedores</h2>
+        <LegendaIcones />
+      </div>
 
+      {/* Campo de busca */}
       <div className="search-input-wrapper" style={{ position: 'relative' }}>
         <input
           type="text"
@@ -232,32 +244,22 @@ export default function FornecedorList() {
           onBlur={() => setTimeout(() => setMostrarSugestoes(false), 150)}
         />
         {busca && (
-          <button className="clear-button" onClick={() => setBusca('')} type="button">
-            ×
-          </button>
+          <button className="clear-button" onClick={() => setBusca('')} type="button">×</button>
         )}
-
         {mostrarSugestoes && sugestoes.length > 0 && (
           <ul className="tag-sugestoes">
             {sugestoes.map((tag, i) => (
-              <li key={i} className="tag-sugestao" onMouseDown={() => setBusca(tag)}>
-                {tag}
-              </li>
+              <li key={i} className="tag-sugestao" onMouseDown={() => setBusca(tag)}>{tag}</li>
             ))}
           </ul>
         )}
       </div>
 
+      {/* Botões de seleção */}
       <div style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem' }}>
-        <button
-          className="btn selecionar-btn"
-          onClick={toggleModoSelecao}
-          type="button"
-          style={{ marginRight: '1rem' }}
-        >
+        <button className="btn selecionar-btn" onClick={toggleModoSelecao} type="button" style={{ marginRight: '1rem' }}>
           {modoSelecao ? 'Cancelar' : 'Selecionar'}
         </button>
-
         {modoSelecao && (
           <>
             <FaCopy
@@ -283,178 +285,75 @@ export default function FornecedorList() {
         )}
       </div>
 
+      {/* Lista de fornecedores */}
       <div className="fornecedor-list-container">
         <ul className="fornecedor-list">
+          {fornecedores.length === 0 && <EmptyState mensagem="Não encontrei nada... que pena!" />}
           {fornecedores
             .slice()
             .sort((a, b) => a.nome.localeCompare(b.nome))
-            .map((f) =>
+            .map(f =>
               editando === f.id ? (
                 <li key={f.id} className="fornecedor-item editando">
-                  <input
-                    type="text"
-                    value={form.nome}
-                    onChange={(e) => setForm({ ...form, nome: e.target.value })}
-                    placeholder="Nome"
-                  />
-                  <input
-                    type="text"
-                    value={form.empresa}
-                    onChange={(e) => setForm({ ...form, empresa: e.target.value })}
-                    placeholder="Empresa"
-                  />
-                  <input
-                    type="text"
-                    value={form.whatsapp}
-                    onChange={(e) => setForm({ ...form, whatsapp: e.target.value })}
-                    placeholder="WhatsApp"
-                  />
-                  <input
-                    type="text"
-                    value={form.tags}
-                    onChange={(e) => setForm({ ...form, tags: e.target.value })}
-                    placeholder="#tags"
-                  />
-
-                  {/* Botões de tipo */}
+                  {/* Campos de edição */}
+                  <input type="text" value={form.nome} onChange={e => setForm({ ...form, nome: e.target.value })} placeholder="Nome" />
+                  <input type="text" value={form.empresa} onChange={e => setForm({ ...form, empresa: e.target.value })} placeholder="Empresa" />
+                  <input type="text" value={form.whatsapp} onChange={e => setForm({ ...form, whatsapp: e.target.value })} placeholder="WhatsApp" />
+                  <input type="text" value={form.tags} onChange={e => setForm({ ...form, tags: e.target.value })} placeholder="#tags" />
                   <div style={{ marginTop: '8px', display: 'flex', gap: '8px' }}>
-                    <button
-                      type="button"
-                      className={`btn ${form.tipo === 'servico' ? 'selecionado' : ''}`}
-                      onClick={() => setForm({ ...form, tipo: 'servico' })}
-                    >
-                      Serviço
-                    </button>
-                    <button
-                      type="button"
-                      className={`btn ${form.tipo === 'material' ? 'selecionado' : ''}`}
-                      onClick={() => setForm({ ...form, tipo: 'material' })}
-                    >
-                      Material
-                    </button>
-                    <button
-                      type="button"
-                      className={`btn ${form.tipo === 'material e servico' ? 'selecionado' : ''}`}
-                      onClick={() => setForm({ ...form, tipo: 'material e servico' })}
-                    >
-                      Material e Serviço
-                    </button>
+                    <button type="button" className={`btn ${form.tipo === 'servico' ? 'selecionado' : ''}`} onClick={() => setForm({ ...form, tipo: 'servico' })}>Serviço</button>
+                    <button type="button" className={`btn ${form.tipo === 'material' ? 'selecionado' : ''}`} onClick={() => setForm({ ...form, tipo: 'material' })}>Material</button>
+                    <button type="button" className={`btn ${form.tipo === 'material e servico' ? 'selecionado' : ''}`} onClick={() => setForm({ ...form, tipo: 'material e servico' })}>Material e Serviço</button>
                   </div>
-
+                  <div style={{ marginTop: '8px', display: 'flex', gap: '16px', alignItems: 'center' }}>
+                    <label><input type="checkbox" checked={form.coopercon} onChange={(e) => setForm({ ...form, coopercon: e.target.checked })} /> Coopercon</label>
+                    <label><input type="checkbox" checked={form.qualifios} onChange={(e) => setForm({ ...form, qualifios: e.target.checked })} /> Qualifios</label>
+                  </div>
                   <div className="edit-buttons">
-                    <button className="btn salvar" onClick={() => salvarEdicao(f.id)}>
-                      Salvar
-                    </button>
-                    <button className="btn cancelar" onClick={cancelarEdicao}>
-                      Cancelar
-                    </button>
+                    <button className="btn salvar" onClick={() => salvarEdicao(f.id)}>Salvar</button>
+                    <button className="btn cancelar" onClick={cancelarEdicao}>Cancelar</button>
                   </div>
                 </li>
               ) : (
                 <li key={f.id} className="fornecedor-item">
-                  {modoSelecao && (
-                    <input
-                      type="checkbox"
-                      checked={selecionados.has(f.id)}
-                      onChange={() => toggleSelecionado(f.id)}
-                      style={{ marginRight: '10px' }}
-                    />
-                  )}
+                  {modoSelecao && <input type="checkbox" checked={selecionados.has(f.id)} onChange={() => toggleSelecionado(f.id)} style={{ marginRight: '10px' }} />}
                   <div className="fornecedor-info" style={{ flex: 1 }}>
                     <strong>
                       {f.nome}{' '}
-                      {Array.isArray(f.tags) &&
-                        f.tags.some(tag => tag.toLowerCase() === '#coopercon') && (
-                          <VscVerified
-                            title="Coopercon"
-                            color="#28a745"
-                            size={16}
-                            style={{ marginLeft: 4, verticalAlign: 'middle' }}
-                          />
-                        )}
+                      <span style={{ display: 'inline-flex', gap: 4, alignItems: 'center' }}>
+                        {f.coopercon && <VscVerified title="Coopercon" color="#28a745" size={16} />}
+                        {f.qualifios && <img src={LogoQualifios} alt="Qualifios" title="Associado Qualifios" style={{ width: 16, height: 16, objectFit: 'contain' }} />}
+                      </span>
                     </strong>
                     <br />
                     {f.empresa}
                     <br />
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                        flexWrap: 'wrap',
-                        marginTop: 4
-                      }}
-                    >
-                      <a
-                        href={`tel:${f.whatsapp.replace(/\D/g, '')}`}
-                        title="Ligar"
-                        style={{ color: '#00C48C' }}
-                      >
-                        <FaPhoneAlt />
-                      </a>
-                      <a
-                        href={`https://wa.me/${f.whatsapp.replace(/\D/g, '')}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        title="WhatsApp"
-                        style={{ color: '#00C48C' }}
-                      >
-                        <FaWhatsapp />
-                      </a>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginTop: 4 }}>
+                      {isMobile && <a href={`tel:${f.whatsapp.replace(/\D/g, '')}`} title="Ligar" style={{ color: '#00C48C' }}><FaPhoneAlt /></a>}
+                      <a href={`https://wa.me/${f.whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" title="WhatsApp" style={{ color: '#00C48C' }}><FaWhatsapp /></a>
                       <span>{f.whatsapp}</span>
                     </div>
-
-                    <div
-                      className="icone-tags-wrapper"
-                      style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 8, flexWrap: 'wrap' }}
-                    >
-                      {escolherIconePorTipo(f.tipo) || (
-                        <FaTags
-                          style={{ color: '#B197FC', verticalAlign: 'middle' }}
-                          title="Tags"
-                        />
-                      )}
-                      {f.tags?.map((tag) => (
-                        <button
-                          key={tag}
-                          className="tag-button"
-                          onClick={() => setBusca(tag)}
-                          type="button"
-                        >
-                          {tag}
-                        </button>
+                    <div className="icone-tags-wrapper" style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 8, flexWrap: 'wrap' }}>
+                      {escolherIconePorTipo(f.tipo)}
+                      {f.tags?.map(tag => (
+                        <button key={tag} className="tag-button" onClick={() => setBusca(tag)} type="button">{tag}</button>
                       ))}
                     </div>
                   </div>
                   {!modoSelecao && (
                     <div className="fornecedor-actions">
-                      <FaCopy
-                        className={`action-icon ${copiadoId === f.id ? 'copied' : ''}`}
-                        title="Copiar contato"
-                        onClick={() => copiarContato(f)}
-                      />
-                      <FaEdit
-                        onClick={() => iniciarEdicao(f)}
-                        className="action-icon"
-                        title="Editar"
-                      />
-                      <FaTrash
-                        onClick={() => deletarFornecedor(f.id)}
-                        className="action-icon"
-                        title="Excluir"
-                      />
+                      <FaCopy className={`action-icon ${copiadoId === f.id ? 'copied' : ''}`} title="Copiar contato" onClick={() => copiarContato(f)} />
+                      <FaEdit onClick={() => iniciarEdicao(f)} className="action-icon" title="Editar" />
+                      <FaTrash onClick={() => deletarFornecedor(f.id)} className="action-icon" title="Excluir" />
                     </div>
                   )}
                 </li>
               )
             )}
-          {fornecedores.length === 0 && <EmptyState mensagem="Não encontrei nada... que pena!" />}
         </ul>
       </div>
 
-      <p className="fornecedor-quantidade">
-        Total de fornecedores exibidos: {fornecedores.length}
-      </p>
+      <p className="fornecedor-quantidade">Total de fornecedores exibidos: {fornecedores.length}</p>
     </div>
   )
 }

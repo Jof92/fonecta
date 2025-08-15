@@ -7,7 +7,11 @@ export default function FornecedorForm({ mostrarTitulo = true, onCadastroFinaliz
   const [nome, setNome] = useState('')
   const [empresa, setEmpresa] = useState('')
   const [whatsapp, setWhatsapp] = useState('')
-  const [tipoFornecedor, setTipoFornecedor] = useState('servico') // novo estado para seleção
+  const [tipoFornecedor, setTipoFornecedor] = useState('servico')
+
+  const [fornecedorCoopercon, setFornecedorCoopercon] = useState(false) // NOVO
+  const [associadoQualifios, setAssociadoQualifios] = useState(false)   // NOVO
+
   const [tags, setTags] = useState('')
   const [todasTags, setTodasTags] = useState([])
   const [sugestoes, setSugestoes] = useState([])
@@ -39,7 +43,7 @@ export default function FornecedorForm({ mostrarTitulo = true, onCadastroFinaliz
   const handleTagsChange = (e) => {
     const texto = e.target.value
     setTags(texto)
-    setSugestaoSelecionada(-1) // resetar seleção ao digitar
+    setSugestaoSelecionada(-1)
 
     const partes = texto.split(/\s+/)
     const ultima = partes[partes.length - 1]
@@ -128,8 +132,10 @@ export default function FornecedorForm({ mostrarTitulo = true, onCadastroFinaliz
       nome,
       empresa,
       whatsapp: whatsappFormatado,
-      tipo: tipoFornecedor,  // incluir tipo selecionado no cadastro
+      tipo: tipoFornecedor,
       tags: tagsArray,
+      coopercon: fornecedorCoopercon,     // NOVO
+      qualifios: associadoQualifios       // NOVO
     }])
 
     if (error) {
@@ -143,6 +149,8 @@ export default function FornecedorForm({ mostrarTitulo = true, onCadastroFinaliz
       setTags('')
       setSugestoes([])
       setSugestaoSelecionada(-1)
+      setFornecedorCoopercon(false)
+      setAssociadoQualifios(false)
 
       if (onCadastroFinalizado) {
         setTimeout(() => {
@@ -193,7 +201,7 @@ export default function FornecedorForm({ mostrarTitulo = true, onCadastroFinaliz
           required
         />
 
-        {/* Grupo de botões de seleção */}
+        {/* Tipo de fornecedor */}
         <div className="selection-group" role="radiogroup" aria-label="Tipo de Fornecedor">
           <button
             type="button"
@@ -220,6 +228,26 @@ export default function FornecedorForm({ mostrarTitulo = true, onCadastroFinaliz
             Material e Serviço
           </button>
         </div>
+
+        {/* Pergunta Coopercon */}
+        <label className="form-label" style={{ marginTop: '10px' }}>
+          <input
+            type="checkbox"
+            checked={fornecedorCoopercon}
+            onChange={(e) => setFornecedorCoopercon(e.target.checked)}
+          />{' '}
+          Fornecedor Coopercon?
+        </label>
+
+        {/* Pergunta Qualifios */}
+        <label className="form-label" style={{ marginTop: '5px' }}>
+          <input
+            type="checkbox"
+            checked={associadoQualifios}
+            onChange={(e) => setAssociadoQualifios(e.target.checked)}
+          />{' '}
+          Associado à Qualifios?
+        </label>
 
         <label className="form-label">Hashtags:</label>
         <div style={{ position: 'relative' }}>

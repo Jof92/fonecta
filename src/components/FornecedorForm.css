@@ -5,8 +5,13 @@
   background: #fff;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 8px;
   font-family: 'Arial', sans-serif;
+
+  /* Evita ultrapassar a tela */
+  max-height: 80vh;       
+  overflow-y: auto;       
+  padding-right: 8px;     /* evita esconder conteúdo atrás da barra de rolagem */
 }
 
 /* Campos de entrada */
@@ -40,7 +45,7 @@
   display: flex;
   justify-content: space-between;
   gap: 6px;
-  margin-top: -4px; /* aproxima do campo WhatsApp */
+  margin-top: -4px;  /* aproxima do campo WhatsApp */
   margin-bottom: -4px; /* aproxima do campo hashtag */
 }
 
