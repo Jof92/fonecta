@@ -48,6 +48,10 @@
   font-weight: 600;
   text-align: center;
   margin: 0;
+  color: black;
+  text-shadow: 
+    0 0 3px rgba(255, 255, 255, 0.8),
+    0 0 6px rgba(255, 255, 255, 0.6);
 }
 
 /* Linha 2: formulário + QR */

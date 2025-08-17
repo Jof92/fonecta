@@ -3,14 +3,18 @@ import { supabase } from '../supabaseClient'
 import Toast from './Toast'
 import './FornecedorForm.css'
 
-export default function FornecedorForm({ mostrarTitulo = true, onCadastroFinalizado }) {
+export default function FornecedorForm({
+  mostrarTitulo = true,
+  onCadastroFinalizado,
+  origem = 'admin' // 'externo' ou 'admin'
+}) {
   const [nome, setNome] = useState('')
   const [empresa, setEmpresa] = useState('')
   const [whatsapp, setWhatsapp] = useState('')
   const [tipoFornecedor, setTipoFornecedor] = useState('servico')
 
-  const [fornecedorCoopercon, setFornecedorCoopercon] = useState(false) // NOVO
-  const [associadoQualifios, setAssociadoQualifios] = useState(false)   // NOVO
+  const [fornecedorCoopercon, setFornecedorCoopercon] = useState(false)
+  const [associadoQualifios, setAssociadoQualifios] = useState(false)
 
   const [tags, setTags] = useState('')
   const [todasTags, setTodasTags] = useState([])
@@ -22,13 +26,11 @@ export default function FornecedorForm({ mostrarTitulo = true, onCadastroFinaliz
 
   const inputTagsRef = useRef(null)
 
+  // Carregar todas as tags existentes
   useEffect(() => {
     const carregarTags = async () => {
       const { data, error } = await supabase.from('fornecedores').select('tags')
-      if (error) {
-        console.error('Erro ao buscar tags:', error)
-        return
-      }
+      if (error) return console.error('Erro ao buscar tags:', error)
 
       const tagsUnicas = new Set()
       data.forEach(f => {
@@ -40,6 +42,7 @@ export default function FornecedorForm({ mostrarTitulo = true, onCadastroFinaliz
     carregarTags()
   }, [])
 
+  // Gerenciamento de sugestões de tags
   const handleTagsChange = (e) => {
     const texto = e.target.value
     setTags(texto)
@@ -50,9 +53,7 @@ export default function FornecedorForm({ mostrarTitulo = true, onCadastroFinaliz
 
     if (ultima.length >= 4 && ultima.startsWith('#')) {
       const termo = ultima.toLowerCase()
-      const filtradas = todasTags.filter(
-        tag => tag.startsWith(termo) && tag !== termo
-      )
+      const filtradas = todasTags.filter(tag => tag.startsWith(termo) && tag !== termo)
       setSugestoes(filtradas.slice(0, 5))
     } else {
       setSugestoes([])
@@ -73,14 +74,10 @@ export default function FornecedorForm({ mostrarTitulo = true, onCadastroFinaliz
 
     if (e.key === 'ArrowDown') {
       e.preventDefault()
-      setSugestaoSelecionada(prev =>
-        prev < sugestoes.length - 1 ? prev + 1 : 0
-      )
+      setSugestaoSelecionada(prev => (prev < sugestoes.length - 1 ? prev + 1 : 0))
     } else if (e.key === 'ArrowUp') {
       e.preventDefault()
-      setSugestaoSelecionada(prev =>
-        prev > 0 ? prev - 1 : sugestoes.length - 1
-      )
+      setSugestaoSelecionada(prev => (prev > 0 ? prev - 1 : sugestoes.length - 1))
     } else if (e.key === 'Enter' || e.key === 'Tab') {
       if (sugestaoSelecionada >= 0 && sugestaoSelecionada < sugestoes.length) {
         e.preventDefault()
@@ -89,25 +86,28 @@ export default function FornecedorForm({ mostrarTitulo = true, onCadastroFinaliz
     }
   }
 
+  // Exibir mensagens
   const exibirMensagem = (texto, tipo = 'sucesso') => {
     setMensagem(texto)
     setTipoMensagem(tipo)
     setTimeout(() => setMensagem(null), 3000)
   }
 
+  // Submit do formulário
   const handleSubmit = async (e) => {
     e.preventDefault()
 
+    // Validação WhatsApp
     const numeroLimpo = whatsapp.replace(/\D/g, '')
     if (!/^\d{10,11}$/.test(numeroLimpo)) {
       exibirMensagem('Número de WhatsApp inválido. Use o formato: xx xxxxx xxxx', 'erro')
       return
     }
-
     const ddd = numeroLimpo.slice(0, 2)
     const numero = numeroLimpo.slice(2)
     const whatsappFormatado = `(${ddd}) ${numero}`
 
+    // Verifica duplicidade
     const { data: existentes, error: erroConsulta } = await supabase
       .from('fornecedores')
       .select('id')
@@ -117,31 +117,49 @@ export default function FornecedorForm({ mostrarTitulo = true, onCadastroFinaliz
       exibirMensagem('Erro ao verificar duplicidade: ' + erroConsulta.message, 'erro')
       return
     }
-
     if (existentes.length > 0) {
       exibirMensagem('Este número de WhatsApp já está cadastrado.', 'erro')
       return
     }
 
+    // Processa tags
     const tagsArray = tags
       .split(/[\s,]+/)
       .filter(tag => tag.startsWith('#'))
       .map(tag => tag.toLowerCase())
 
-    const { error } = await supabase.from('fornecedores').insert([{
-      nome,
-      empresa,
-      whatsapp: whatsappFormatado,
-      tipo: tipoFornecedor,
-      tags: tagsArray,
-      coopercon: fornecedorCoopercon,     // NOVO
-      qualifios: associadoQualifios       // NOVO
-    }])
+    // Insere fornecedor
+    const { data: novoFornecedor, error } = await supabase
+      .from('fornecedores')
+      .insert([{
+        nome,
+        empresa,
+        whatsapp: whatsappFormatado,
+        tipo: tipoFornecedor,
+        tags: tagsArray,
+        coopercon: fornecedorCoopercon,
+        qualifios: associadoQualifios
+      }])
+      .select()
+      .single()
 
     if (error) {
       exibirMensagem('Erro ao cadastrar: ' + error.message, 'erro')
     } else {
       exibirMensagem('Fornecedor cadastrado com sucesso!')
+
+      // Só criar notificação se for cadastro externo
+      if (origem === 'externo') {
+        const tagsMensagem = tagsArray.slice(0, 3).join(', ')
+        const mensagemReport = `${nome} da empresa ${empresa} fez um novo cadastro com as tags (${tagsMensagem})`
+
+        await supabase.from('reports').insert([{
+          tipo: 'cadastro_externo',
+          mensagem: mensagemReport
+        }])
+      }
+
+      // Limpa formulário
       setNome('')
       setEmpresa('')
       setWhatsapp('')
@@ -154,7 +172,7 @@ export default function FornecedorForm({ mostrarTitulo = true, onCadastroFinaliz
 
       if (onCadastroFinalizado) {
         setTimeout(() => {
-          onCadastroFinalizado()
+          onCadastroFinalizado(novoFornecedor)
         }, 1500)
       }
     }
@@ -229,7 +247,7 @@ export default function FornecedorForm({ mostrarTitulo = true, onCadastroFinaliz
           </button>
         </div>
 
-        {/* Pergunta Coopercon */}
+        {/* Perguntas adicionais */}
         <label className="form-label" style={{ marginTop: '10px' }}>
           <input
             type="checkbox"
@@ -239,7 +257,6 @@ export default function FornecedorForm({ mostrarTitulo = true, onCadastroFinaliz
           Fornecedor Coopercon?
         </label>
 
-        {/* Pergunta Qualifios */}
         <label className="form-label" style={{ marginTop: '5px' }}>
           <input
             type="checkbox"

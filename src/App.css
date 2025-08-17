@@ -60,47 +60,7 @@
 }
 
 /* Cabeçalho */
-.app-header {
-  padding: 0.5rem 2rem;
-  border-bottom: 1px solid #ccc;
-  flex: 0 0 60px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background-color: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  position: relative;
-  z-index: 100;
-  opacity: 0.98;
-}
 
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.logo-fonecta {
-  height: 36px;
-  object-fit: contain;
-}
-
-.fonecta-title {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #0066ff;
-}
-
-.logo-parceira {
-  height: 60px;
-  width: 60px;
-  border-radius: 50%;
-  object-fit: contain;
-  border: 3px solid #009DFF;
-  background-color: white;
-  padding: 1px;
-  box-sizing: border-box;
-}
 
 /* Área principal */
 .app-main {
@@ -165,7 +125,6 @@ button {
 }
 
 button:hover {
-  background-color: #0052cc;
   color: white;
 }
 

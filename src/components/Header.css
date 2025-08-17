@@ -1,0 +1,252 @@
+.app-header {
+  padding: 0.5rem 2rem;
+  border-bottom: 1px solid #ccc;
+  flex: 0 0 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  position: relative;
+  z-index: 100;
+  opacity: 0.98;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.logo-fonecta {
+  height: 36px;
+  object-fit: contain;
+}
+
+.fonecta-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #0066ff;
+}
+
+.logo-parceira {
+  height: 60px;
+  width: 60px;
+  border-radius: 50%;
+  object-fit: contain;
+  border: 3px solid #009DFF;
+  background-color: white;
+  padding: 1px;
+  box-sizing: border-box;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.gear-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.gear-button {
+  background: transparent;
+  border: none;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: filter 0.3s;
+  cursor: pointer;
+}
+
+.menu-tema {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  padding: 0.5rem 0;
+  min-width: 140px;
+  font-size: 0.9rem;
+  z-index: 1100;
+}
+
+.menu-item {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  background-color: transparent;
+  color: black;
+  transition: background-color 0.2s;
+}
+
+.menu-item.ativo {
+  background-color: #00C48C;
+  font-weight: 700;
+}
+
+.menu-item:hover {
+  background-color: #94e0c8;
+}
+
+.admin-icons {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+}
+
+.btn-envelope {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.badge-reports {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: red;
+  border-radius: 50%;
+  color: white;
+  padding: 2px 6px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.logo-parceira.clickable {
+  cursor: pointer;
+}
+
+.menu-logo,
+.menu-logo-busca {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  width: 180px;
+  z-index: 1001;
+}
+
+.menu-logo-busca {
+  width: 140px;
+}
+
+.menu-logo-item {
+  width: 100%;
+  padding: 10px 12px;
+  background: transparent;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+}
+.menu-logo-item:hover {
+  background-color: #00C48C;
+  color: white; /* opcional: melhora a leitura */
+}
+
+
+.menu-logo-item.sair {
+  color: black;
+  font-weight: bold;
+}
+
+.busca-logo {
+  position: relative;
+}
+
+.box-reports {
+  position: absolute;
+  top: 3.5rem;
+  right: 1rem;
+  width: 280px;
+  max-height: 300px;
+  overflow-y: auto;
+  background: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  padding: 0.5rem;
+  z-index: 1000;
+}
+
+.titulo-reports {
+  margin: 0.5rem;
+  text-align: center;
+}
+
+.report-item {
+  padding: 0.4rem 0.5rem;
+  border-bottom: 1px solid #ddd;
+  cursor: pointer;
+  background-color: white;
+}
+
+.report-item.lido {
+  background-color: #f0f0f0;
+}
+
+.btn-voltar {
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: #0066ff;
+}
+
+/* Botão de apagar mensagem no box de reports */
+.btn-delete-report {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  margin-left: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s, opacity 0.2s;
+}
+
+.btn-delete-report:hover {
+  transform: scale(1.1);
+  opacity: 0.8;
+}
+
+.report-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 8px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.report-item.lido {
+  background-color: #f9f9f9;
+  color: #888;
+}
+
+.report-item span {
+  flex: 1;
+  cursor: pointer;
+  word-break: break-word;
+}
+
