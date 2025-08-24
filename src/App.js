@@ -16,10 +16,12 @@ import CadastroFornecedor from './components/CadastroExterno'
 import AdminPage from './components/AdminPage'
 import Cnpj from './components/Cnpj'
 
-import secreImg from './assets/secre.png'
+/*import secreImg from './assets/secre.png'*/
 import caixaImg from './assets/caixa.png'
 import maoImg from './assets/mao.png'
 import empiImg from './assets/empi.png'
+import onboxImg from './assets/onbox.png'
+
 
 // Importa a engrenagem SVG como componente React
 import { ReactComponent as GearIcon } from './assets/icon/gear.svg'
@@ -27,12 +29,13 @@ import { ReactComponent as GearIcon } from './assets/icon/gear.svg'
 import './App.css'
 
 function CadastroPage() {
-  const imagens = [secreImg, maoImg, caixaImg, empiImg]
+  const imagens = [ maoImg, caixaImg, empiImg, onboxImg]
   const frases = [
-    <span><strong>Aqui</strong> seus fornecedores se encontram</span>,
+    /*<span><strong>Aqui</strong> seus fornecedores se encontram</span>,*/
     <span>Seu <strong>Projeto</strong> começa com boas conexões</span>,
     <span><strong>Aqui</strong> todos os seus fornecedores estão reunidos</span>,
     <span>Mais <strong>Agilidade</strong> para encontrar quem resolve</span>,
+    <span><strong>Vem</strong> ai!</span>,
   ]
 
   const [index, setIndex] = useState(0)
