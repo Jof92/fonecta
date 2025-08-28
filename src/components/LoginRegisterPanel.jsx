@@ -13,7 +13,7 @@ export default function LoginRegisterPanel({ onLoginSuccess }) {
     nome: '',
     empresa: '',
     setor: '',
-    codigo: '', // aqui continua o campo código para o usuário digitar
+    codigo: '',
   })
   const [mensagem, setMensagem] = useState(null)
 
@@ -22,6 +22,7 @@ export default function LoginRegisterPanel({ onLoginSuccess }) {
     setForm((prev) => ({ ...prev, [name]: value }))
   }
 
+  // ---------------- LOGIN ----------------
   const handleLogin = async (e) => {
     e.preventDefault()
     setMensagem(null)
@@ -36,8 +37,12 @@ export default function LoginRegisterPanel({ onLoginSuccess }) {
       return
     }
 
-    // Buscar o perfil do usuário logado (coluna 'perfil' na tabela profiles)
-    const userId = data.user.id
+    const userId = data.user?.id
+    if (!userId) {
+      setMensagem('Erro: usuário não encontrado.')
+      return
+    }
+
     const { data: perfilData, error: perfilError } = await supabase
       .from('profiles')
       .select('perfil')
@@ -50,36 +55,39 @@ export default function LoginRegisterPanel({ onLoginSuccess }) {
     }
 
     setMensagem('Login bem-sucedido!')
-    onLoginSuccess?.(data.user) // Fecha painel
+    onLoginSuccess?.(data.user)
 
-    // Redireciona conforme o perfil
     if (perfilData.perfil === 'admin') {
       navigate('/admin')
     } else if (perfilData.perfil === 'buscador') {
       navigate('/busca')
+    } else if (perfilData.perfil === 'pendente') {
+      setMensagem('Cadastro pendente: aguarde aprovação ou insira o código correto.')
     } else {
       setMensagem('Perfil inválido no cadastro.')
     }
   }
 
+  // ---------------- CADASTRO ----------------
   const handleCadastro = async (e) => {
     e.preventDefault()
     setMensagem(null)
 
-    // Transforma o código em perfil
     const perfil =
       form.codigo === 'admin123' ? 'admin' :
       form.codigo === 'buscador123' ? 'buscador' :
       null
 
     if (!perfil) {
-      setMensagem('Código inválido! Use admin123 ou buscador123.')
+      setMensagem('Código inválido! Busque seu código com o administrador.')
       return
     }
 
+    // Cadastro sem esperar confirmação de email
     const { data, error } = await supabase.auth.signUp({
       email: form.email,
       password: form.senha,
+      options: { emailRedirectTo: window.location.origin } // evita problemas com redirecionamento
     })
 
     if (error) {
@@ -87,23 +95,29 @@ export default function LoginRegisterPanel({ onLoginSuccess }) {
       return
     }
 
-    // Salva as informações extras no perfil, incluindo o perfil
-    const { error: errorProfile } = await supabase.from('profiles').insert([
-      {
-        id: data.user.id,
+    const userId = data.user?.id
+    if (!userId) {
+      setMensagem('Erro: usuário não retornado no cadastro.')
+      return
+    }
+
+    // Atualiza o perfil pendente criado pelo trigger
+    const { error: errorProfile } = await supabase
+      .from('profiles')
+      .update({
         nome: form.nome,
         empresa: form.empresa,
         setor: form.setor,
-        perfil,  // salva o perfil e não o código
-      },
-    ])
+        perfil, // 'admin' ou 'buscador'
+      })
+      .eq('id', userId)
 
     if (errorProfile) {
       setMensagem('Erro ao salvar perfil: ' + errorProfile.message)
       return
     }
 
-    setMensagem(`Usuário ${perfil} cadastrado com sucesso! Verifique seu email.`)
+    setMensagem(`Usuário ${perfil} cadastrado com sucesso!Vá até o email cadastrado e confirme.`)
 
     setForm({
       email: '',
@@ -123,72 +137,27 @@ export default function LoginRegisterPanel({ onLoginSuccess }) {
 
       <form onSubmit={modo === 'login' ? handleLogin : handleCadastro}>
         <label>Email:</label>
-        <input
-          type="email"
-          name="email"
-          value={form.email}
-          onChange={handleChange}
-          required
-        />
-
+        <input type="email" name="email" value={form.email} onChange={handleChange} required />
         <label>Senha:</label>
-        <input
-          type="password"
-          name="senha"
-          value={form.senha}
-          onChange={handleChange}
-          required
-        />
+        <input type="password" name="senha" value={form.senha} onChange={handleChange} required />
 
         {modo === 'cadastro' && (
           <>
             <label>Nome:</label>
-            <input
-              type="text"
-              name="nome"
-              value={form.nome}
-              onChange={handleChange}
-              required
-            />
-
+            <input type="text" name="nome" value={form.nome} onChange={handleChange} required />
             <label>Empresa:</label>
-            <input
-              type="text"
-              name="empresa"
-              value={form.empresa}
-              onChange={handleChange}
-              required
-            />
-
+            <input type="text" name="empresa" value={form.empresa} onChange={handleChange} required />
             <label>Setor:</label>
-            <input
-              type="text"
-              name="setor"
-              value={form.setor}
-              onChange={handleChange}
-              required
-            />
-
+            <input type="text" name="setor" value={form.setor} onChange={handleChange} required />
             <label>Código de acesso:</label>
-            <input
-              type="text"
-              name="codigo"
-              value={form.codigo}
-              onChange={handleChange}
-              required
-            />
+            <input type="text" name="codigo" value={form.codigo} onChange={handleChange} required />
           </>
         )}
 
-        <button type="submit">
-          {modo === 'login' ? 'Entrar' : 'Cadastrar'}
-        </button>
+        <button type="submit">{modo === 'login' ? 'Entrar' : 'Cadastrar'}</button>
       </form>
 
-      <button
-        className="toggle-mode"
-        onClick={() => setModo(modo === 'login' ? 'cadastro' : 'login')}
-      >
+      <button className="toggle-mode" onClick={() => setModo(modo === 'login' ? 'cadastro' : 'login')}>
         {modo === 'login' ? 'Criar uma conta' : 'Voltar para login'}
       </button>
 
