@@ -1,0 +1,232 @@
+/* src/components/OrcamentosPage.css */
+.orcamentos-page {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+  min-height: calc(100vh - 140px);
+}
+
+.page-header {
+  margin-bottom: 1.5rem;
+}
+
+.page-header h1 {
+  font-size: 1.8rem;
+  color: #2c3e50;
+  margin-bottom: 0.3rem;
+}
+
+.page-subtitle {
+  color: #7f8c8d;
+  font-size: 1rem;
+  margin: 0;
+}
+
+/* Filtros */
+.filters-bar {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.search-input {
+  flex: 1;
+  min-width: 250px;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1em;
+}
+
+.filter-select {
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: white;
+  min-width: 180px;
+}
+
+/* Tabela */
+.table-container {
+  overflow-x: auto;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  margin-bottom: 1.5rem;
+}
+
+.orcamentos-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  font-size: 0.85em;
+}
+
+.orcamentos-table th {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 12px 8px;
+  text-align: center;
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  white-space: nowrap;
+}
+
+.orcamentos-table td {
+  padding: 8px 6px;
+  border-bottom: 1px solid #eee;
+  text-align: center;
+}
+
+.col-desc {
+  text-align: left !important;
+  min-width: 200px;
+}
+
+.table-input {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  text-align: center;
+  font-size: 0.95em;
+  transition: all 0.2s;
+  background: transparent;
+}
+
+.table-input:hover,
+.table-input:focus {
+  border-color: #667eea;
+  background: #f8f9fa;
+  outline: none;
+}
+
+.calculated {
+  background: #f8f9fa;
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.col-destaque {
+  background: #fff3cd !important;
+  font-weight: 600;
+}
+
+.total {
+  color: #27ae60;
+}
+
+/* Linha de total */
+.total-row {
+  background: #ecf0f1 !important;
+  font-weight: bold;
+}
+
+.total-row td {
+  border-top: 2px solid #667eea !important;
+}
+
+/* Ações */
+.col-actions {
+  min-width: 80px;
+}
+
+.btn-icon {
+  background: none;
+  border: none;
+  font-size: 1.1em;
+  cursor: pointer;
+  padding: 4px 6px;
+  margin: 0 2px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.btn-icon:hover {
+  background: #667eea20;
+  transform: scale(1.1);
+}
+
+.btn-save:hover { color: #27ae60; }
+.btn-delete:hover { color: #e74c3c; }
+
+/* Botões de ação */
+.actions-bar {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.btn-primary, .btn-secondary, .btn-success {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 1em;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary {
+  background: #95a5a6;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background: #7f8c8d;
+}
+
+.btn-success {
+  background: #27ae60;
+  color: white;
+}
+
+.btn-success:hover {
+  background: #219150;
+}
+
+/* Responsivo */
+@media (max-width: 1024px) {
+  .orcamentos-table {
+    font-size: 0.75em;
+  }
+  
+  .filters-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .actions-bar {
+    justify-content: center;
+  }
+}
+
+/* Modo escuro */
+.tema-dark .orcamentos-table {
+  background: #2c3e50;
+}
+
+.tema-dark .orcamentos-table td,
+.tema-dark .orcamentos-table .calculated {
+  background: #34495e;
+  color: #ecf0f1;
+  border-color: #4a6278;
+}
+
+.tema-dark .table-input:focus {
+  background: #4a6278;
+}

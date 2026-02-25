@@ -1,5 +1,5 @@
 // src/App.jsx
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   BrowserRouter as Router,
   Routes,
@@ -26,10 +26,6 @@ import PedidosPage from './components/Pedidospage'
 import NovoPedidoForm from './components/NovoPedidoForm'
 import PedidoResultados from './components/PedidoResultados'
 import RespostaFornecedor from './components/RespostaFornecedor'
-
-
-// Importa a engrenagem SVG como componente React
-import { ReactComponent as GearIcon } from './assets/icon/gear.svg'
 
 import './App.css'
 
