@@ -13,8 +13,6 @@ export default function FornecedorListBusca({ adicionarReport, nomeUsuarioLogado
   const [busca, setBusca] = useState('');
   const [fornecedores, setFornecedores] = useState([]);
   const [copiadoId, setCopiadoId] = useState(null);
-  const [sugestoes, setSugestoes] = useState([]);
-  const [mostrarSugestoes, setMostrarSugestoes] = useState(false);
   const [marcados, setMarcados] = useState(new Set());
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
@@ -42,34 +40,6 @@ export default function FornecedorListBusca({ adicionarReport, nomeUsuarioLogado
     setFornecedores(filtrados);
   }, [busca]);
 
-  const buscarSugestoes = async (texto) => {
-    if (texto.length < 2) {
-      setMostrarSugestoes(false);
-      setSugestoes([]);
-      return;
-    }
-
-    const { data, error } = await supabase
-      .from('fornecedores')
-      .select('tags')
-      .not('tags', 'is', null)
-      .limit(50);
-
-    if (error) {
-      console.error('Erro ao buscar tags:', error);
-      setMostrarSugestoes(false);
-      return;
-    }
-
-    const tags = [...new Set(data.flatMap(f => (Array.isArray(f.tags) ? f.tags : [])))];
-    const filtradas = tags
-      .filter(tag => tag.toLowerCase().includes(texto.toLowerCase()))
-      .map(tag => (tag.startsWith('#') ? tag : `#${tag}`));
-
-    setSugestoes(filtradas);
-    setMostrarSugestoes(true);
-  };
-
   useEffect(() => {
     buscarFornecedores();
   }, [buscarFornecedores]);
@@ -84,7 +54,7 @@ export default function FornecedorListBusca({ adicionarReport, nomeUsuarioLogado
 
   const toggleMarcado = async (f) => {
     const novo = new Set(marcados);
-    const { data: userData } = await supabase.auth.getUser();
+    const {  userData } = await supabase.auth.getUser();
     const user = userData?.user;
 
     if (!user) {
