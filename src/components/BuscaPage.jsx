@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { supabase } from '../supabaseClient';
 import { FaCopy, FaTags, FaPhoneAlt, FaWhatsapp } from 'react-icons/fa';
 import { MdManageAccounts, MdOutlineHandyman } from 'react-icons/md';
-import { VscVerified } from 'react-icons/vsc'; // Coopercon
-import WorkerIcon from '../assets/icon/worker.svg'; // Material + Serviço
-import QualifiosLogo from '../assets/icon/logo-qualifio-bkp.png'; // Qualifios
+import { VscVerified } from 'react-icons/vsc';
+import WorkerIcon from '../assets/icon/worker.svg';
+import QualifiosLogo from '../assets/icon/logo-qualifio-bkp.png';
 import './BuscaPage.css';
 import EmptyState from './EmptyState';
 import LegendaIcones from './legendaIcones';
@@ -18,14 +18,13 @@ export default function FornecedorListBusca({ adicionarReport, nomeUsuarioLogado
   const [marcados, setMarcados] = useState(new Set());
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
-  // Atualiza isMobile ao redimensionar
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const buscarFornecedores = async () => {
+  const buscarFornecedores = useCallback(async () => {
     const { data, error } = await supabase.from('fornecedores').select('*');
     if (error) return console.error('Erro ao buscar fornecedores:', error);
 
@@ -41,7 +40,7 @@ export default function FornecedorListBusca({ adicionarReport, nomeUsuarioLogado
       (Array.isArray(f.tags) && f.tags.some(tag => tag.toLowerCase().includes(termo)))
     );
     setFornecedores(filtrados);
-  };
+  }, [busca]);
 
   const buscarSugestoes = async (texto) => {
     if (texto.length < 2) {
@@ -73,7 +72,7 @@ export default function FornecedorListBusca({ adicionarReport, nomeUsuarioLogado
 
   useEffect(() => {
     buscarFornecedores();
-  }, [busca]);
+  }, [buscarFornecedores]);
 
   const copiarContato = (f) => {
     const texto = `Nome: ${f.nome}\nEmpresa: ${f.empresa}\nWhatsApp: ${f.whatsapp}`;
@@ -94,7 +93,6 @@ export default function FornecedorListBusca({ adicionarReport, nomeUsuarioLogado
     }
 
     if (novo.has(f.id)) {
-      // Se já estava marcado → desmarcar e remover do Supabase
       novo.delete(f.id);
       const { error } = await supabase
         .from("fornecedores_check")
@@ -103,9 +101,7 @@ export default function FornecedorListBusca({ adicionarReport, nomeUsuarioLogado
         .eq("user_id", user.id);
 
       if (error) console.error("Erro ao remover do fornecedores_check:", error);
-
     } else {
-      // Se não estava marcado → marcar e inserir no Supabase
       novo.add(f.id);
       const { error } = await supabase.from("fornecedores_check").insert([
         {
@@ -127,11 +123,6 @@ export default function FornecedorListBusca({ adicionarReport, nomeUsuarioLogado
     }
 
     setMarcados(novo);
-  };
-
-  const selecionarSugestao = (tag) => {
-    setBusca(tag);
-    setMostrarSugestoes(false);
   };
 
   const escolherIconePorTipo = (f) => {
@@ -166,8 +157,6 @@ export default function FornecedorListBusca({ adicionarReport, nomeUsuarioLogado
         <h2>Buscar Fornecedores</h2>
         <LegendaIcones />
       </div>
-
-      {/* ... resto do código igual, só mexemos no toggleMarcado */}
       
       <div className="fornecedor-list-container">
         <ul className="fornecedor-list">

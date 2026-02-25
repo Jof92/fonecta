@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { supabase } from '../supabaseClient'
 import {
   FaEdit,
@@ -14,7 +14,7 @@ import './FornecedorList.css'
 import EmptyState from './EmptyState'
 import LogoQualifios from '../assets/icon/logo-qualifio-bkp.png'
 import { ReactComponent as IconWorker } from '../assets/icon/worker.svg'
-import LegendaIcones from './legendaIcones' // botão da legenda de ícones
+import LegendaIcones from './legendaIcones'
 
 export default function FornecedorList() {
   const [busca, setBusca] = useState('')
@@ -42,11 +42,7 @@ export default function FornecedorList() {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
-  useEffect(() => {
-    buscarFornecedores()
-  }, [busca])
-
-  const buscarFornecedores = async () => {
+  const buscarFornecedores = useCallback(async () => {
     const { data, error } = await supabase.from('fornecedores').select('*')
     if (error) return console.error('Erro ao buscar fornecedores:', error)
 
@@ -67,7 +63,11 @@ export default function FornecedorList() {
     setFornecedores(filtrados)
     setSelecionados(new Set())
     setModoSelecao(false)
-  }
+  }, [busca])
+
+  useEffect(() => {
+    buscarFornecedores()
+  }, [buscarFornecedores])
 
   const buscarSugestoes = async (texto) => {
     if (texto.length < 2) {
@@ -215,7 +215,6 @@ export default function FornecedorList() {
 
   return (
     <div className="fornecedor-wrapper">
-      {/* Título com botão de legenda */}
       <div
           style={{
             display: 'flex',
@@ -229,7 +228,6 @@ export default function FornecedorList() {
         <LegendaIcones />
       </div>
 
-      {/* Campo de busca */}
       <div className="search-input-wrapper" style={{ position: 'relative' }}>
         <input
           type="text"
@@ -255,7 +253,6 @@ export default function FornecedorList() {
         )}
       </div>
 
-      {/* Botões de seleção */}
       <div style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem' }}>
         <button className="btn selecionar-btn" onClick={toggleModoSelecao} type="button" style={{ marginRight: '1rem' }}>
           {modoSelecao ? 'Cancelar' : 'Selecionar'}
@@ -285,7 +282,6 @@ export default function FornecedorList() {
         )}
       </div>
 
-      {/* Lista de fornecedores */}
       <div className="fornecedor-list-container">
         <ul className="fornecedor-list">
           {fornecedores.length === 0 && <EmptyState mensagem="Não encontrei nada... que pena!" />}
@@ -295,7 +291,6 @@ export default function FornecedorList() {
             .map(f =>
               editando === f.id ? (
                 <li key={f.id} className="fornecedor-item editando">
-                  {/* Campos de edição */}
                   <input type="text" value={form.nome} onChange={e => setForm({ ...form, nome: e.target.value })} placeholder="Nome" />
                   <input type="text" value={form.empresa} onChange={e => setForm({ ...form, empresa: e.target.value })} placeholder="Empresa" />
                   <input type="text" value={form.whatsapp} onChange={e => setForm({ ...form, whatsapp: e.target.value })} placeholder="WhatsApp" />

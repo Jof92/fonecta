@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
 import { FaArrowLeft, FaTrophy, FaClock, FaSync } from 'react-icons/fa'
@@ -14,11 +14,7 @@ export default function PedidoResultados() {
   const [respostas, setRespostas] = useState([])
   const [carregando, setCarregando] = useState(true)
 
-  useEffect(() => {
-    if (id) carregarResultados()
-  }, [id])
-
-  async function carregarResultados() {
+  const carregarResultados = useCallback(async () => {
     setCarregando(true)
 
     // 1. Pedido
@@ -79,7 +75,11 @@ export default function PedidoResultados() {
     setFornecedores(pfComFornecedor)
     setRespostas(respData)
     setCarregando(false)
-  }
+  }, [id])
+
+  useEffect(() => {
+    if (id) carregarResultados()
+  }, [id, carregarResultados])
 
   // mapa[pedido_fornecedor_id][insumo_id] = { preco, observacao }
   function montarMapa() {
@@ -109,11 +109,6 @@ export default function PedidoResultados() {
       const qtd = Number(ins.quantidade) || 1
       return acc + (preco != null ? preco * qtd : 0)
     }, 0)
-  }
-
-  function formatarMoeda(v) {
-    if (v == null || v === 0) return '—'
-    return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
   }
 
   function formatarData(d) {

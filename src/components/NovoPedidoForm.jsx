@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
 import {
@@ -49,13 +49,7 @@ export default function NovoPedidoForm() {
     setInsumos(prev => prev.map((ins, idx) => idx === i ? { ...ins, [campo]: valor } : ins))
   }
 
-  useEffect(() => {
-    if (buscaFornecedor.trim().length < 2) { setResultadosBusca([]); return }
-    const timer = setTimeout(() => buscarFornecedores(), 300)
-    return () => clearTimeout(timer)
-  }, [buscaFornecedor])
-
-  async function buscarFornecedores() {
+  const buscarFornecedores = useCallback(async () => {
     setBuscando(true)
     const { data } = await supabase.from('fornecedores').select('*')
     const termo = buscaFornecedor.toLowerCase()
@@ -70,7 +64,13 @@ export default function NovoPedidoForm() {
       .slice(0, 8)
     setResultadosBusca(filtrados)
     setBuscando(false)
-  }
+  }, [buscaFornecedor, fornecedoresSelecionados])
+
+  useEffect(() => {
+    if (buscaFornecedor.trim().length < 2) { setResultadosBusca([]); return }
+    const timer = setTimeout(() => buscarFornecedores(), 300)
+    return () => clearTimeout(timer)
+  }, [buscaFornecedor, buscarFornecedores])
 
   function selecionarFornecedor(f) {
     setFornecedoresSelecionados(prev => [...prev, f])

@@ -19,6 +19,7 @@ export default function Header({ mostrarLogin, setMostrarLogin, user, setUser, t
   const estaNoCadastroExterno = pathname === '/cadastro-externo';
   const estaNaAdmin = pathname === '/admin';
 
+  // eslint-disable-next-line no-unused-vars
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [loginAtivo, setLoginAtivo] = useState(false);
   const [menuAbertoTema, setMenuAbertoTema] = useState(false);
@@ -111,9 +112,8 @@ export default function Header({ mostrarLogin, setMostrarLogin, user, setUser, t
     navigate('/');
   }
 
-  // Navega para /home se já passou do login, senão vai para /
   function handleLogoClick() {
-    if (estaNaHome) return; // na landing, o logo não faz nada (tem o botão de login)
+    if (estaNaHome) return;
     navigate('/home');
   }
 

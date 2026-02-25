@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { useParams } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
 import { FaCheck, FaExclamationTriangle } from 'react-icons/fa'
@@ -16,11 +16,7 @@ export default function RespostaFornecedor() {
   const [enviando, setEnviando] = useState(false)
   const [erro, setErro] = useState('')
 
-  useEffect(() => {
-    if (token) carregarDados()
-  }, [token])
-
-  async function carregarDados() {
+  const carregarDados = useCallback(async () => {
     setEstado('carregando')
 
     // 1. Buscar pedido_fornecedor pelo token
@@ -100,7 +96,11 @@ export default function RespostaFornecedor() {
     setInsumos(insumosData || [])
     setPrecos(init)
     setEstado('formulario')
-  }
+  }, [token])
+
+  useEffect(() => {
+    if (token) carregarDados()
+  }, [token, carregarDados])
 
   function atualizarPreco(insumoId, campo, valor) {
     setPrecos(prev => ({
