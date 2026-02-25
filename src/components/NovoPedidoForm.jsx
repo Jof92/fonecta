@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
 import {
   FaPlus, FaTrash, FaSearch, FaTimes,
-  FaArrowLeft, FaLink, FaCopy, FaCheck
+  FaArrowLeft, FaLink, FaCopy, FaCheck, FaBuilding
 } from 'react-icons/fa'
 import './NovoPedidoForm.css'
 
@@ -11,9 +11,14 @@ const insumoVazio = () => ({ codigo: '', descricao: '', quantidade: '', unidade:
 
 export default function NovoPedidoForm() {
   const navigate = useNavigate()
+  const { projetoId } = useParams()
+
+  const [projeto, setProjeto] = useState(null)
+  const [carregandoProjeto, setCarregandoProjeto] = useState(!!projetoId)
 
   const [nomeEmpreendimento, setNomeEmpreendimento] = useState('')
   const [cnpj, setCnpj] = useState('')
+  const [razaoSocial, setRazaoSocial] = useState('')
   const [dataPedido, setDataPedido] = useState('')
   const [dataLimite, setDataLimite] = useState('')
   const [insumos, setInsumos] = useState([insumoVazio()])
@@ -26,7 +31,26 @@ export default function NovoPedidoForm() {
   const [salvando, setSalvando] = useState(false)
   const [linksGerados, setLinksGerados] = useState([])
   const [copiado, setCopiado] = useState(null)
-  const [etapa, setEtapa] = useState('form')
+
+  useEffect(() => {
+    if (!projetoId) return
+    async function carregarProjeto() {
+      setCarregandoProjeto(true)
+      const { data } = await supabase
+        .from('projetos')
+        .select('*')
+        .eq('id', projetoId)
+        .single()
+      if (data) {
+        setProjeto(data)
+        setNomeEmpreendimento(data.nome || '')
+        setCnpj(data.cnpj || '')
+        setRazaoSocial(data.razao_social || '')
+      }
+      setCarregandoProjeto(false)
+    }
+    carregarProjeto()
+  }, [projetoId])
 
   function mascaraCnpj(v) {
     v = v.replace(/\D/g, '').slice(0, 14)
@@ -82,6 +106,11 @@ export default function NovoPedidoForm() {
     setFornecedoresSelecionados(prev => prev.filter(f => f.id !== id))
   }
 
+  function voltarParaPedidos() {
+    if (projetoId) navigate(`/projetos/${projetoId}/pedidos`)
+    else navigate('/projetos')
+  }
+
   async function handleGerar(e) {
     e.preventDefault()
     const insumosValidos = insumos.filter(i => i.descricao.trim())
@@ -92,7 +121,14 @@ export default function NovoPedidoForm() {
 
     const { data: pedido, error: errPedido } = await supabase
       .from('pedidos')
-      .insert([{ nome_empreendimento: nomeEmpreendimento, cnpj, data_pedido: dataPedido, data_limite: dataLimite }])
+      .insert([{
+        nome_empreendimento: nomeEmpreendimento,
+        cnpj,
+        razao_social: razaoSocial,
+        data_pedido: dataPedido,
+        data_limite: dataLimite,
+        projeto_id: projetoId || null,
+      }])
       .select()
       .single()
 
@@ -125,8 +161,12 @@ export default function NovoPedidoForm() {
     }))
 
     setLinksGerados(links)
-    setEtapa('links')
     setSalvando(false)
+
+    // Scroll suave até os links gerados
+    setTimeout(() => {
+      document.getElementById('np-links-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }, 100)
   }
 
   function copiarLink(token, link) {
@@ -144,66 +184,56 @@ export default function NovoPedidoForm() {
     setTimeout(() => setCopiado(null), 2000)
   }
 
-  // ── Tela de links ────────────────────────────────────────
-  if (etapa === 'links') {
+  if (carregandoProjeto) {
     return (
-      <div className="novo-pedido-page">
-        <div className="np-links-header">
-          <FaCheck className="np-links-check" />
-          <h2>Pedido criado com sucesso!</h2>
-          <p>Envie o link abaixo para cada fornecedor. Cada link é único e exclusivo.</p>
-        </div>
-
-        <div className="np-links-lista">
-          {linksGerados.map(l => (
-            <div key={l.token} className="np-link-item">
-              <div className="np-link-info">
-                <strong>{l.fornecedor.nome}</strong>
-                <span>{l.fornecedor.empresa}</span>
-              </div>
-              <div className="np-link-url">{l.link}</div>
-              <button
-                className={`btn-copiar ${copiado === l.token ? 'copiado' : ''}`}
-                onClick={() => copiarLink(l.token, l.link)}
-              >
-                {copiado === l.token ? <FaCheck /> : <FaCopy />}
-                {copiado === l.token ? 'Copiado!' : 'Copiar'}
-              </button>
-            </div>
-          ))}
-        </div>
-
-        <div className="np-links-acoes">
-          <button className="btn-copiar-todos" onClick={copiarTodos}>
-            {copiado === 'todos' ? <FaCheck /> : <FaCopy />}
-            {copiado === 'todos' ? 'Copiado!' : 'Copiar todos os links'}
-          </button>
-          <button className="btn-voltar-lista" onClick={() => navigate('/pedidos')}>
-            Ver todos os pedidos
-          </button>
-        </div>
+      <div className="novo-pedido-page" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', gap: 12, color: '#64748b' }}>
+        <div className="spinner" />
+        <span>Carregando dados do projeto...</span>
       </div>
     )
   }
 
-  // ── Formulário ───────────────────────────────────────────
   return (
     <div className="novo-pedido-page">
       <div className="np-topbar">
-        <button className="np-btn-voltar" onClick={() => navigate('/pedidos')}>
+        <button className="np-btn-voltar" onClick={voltarParaPedidos}>
           <FaArrowLeft /> Voltar
         </button>
         <h2>Novo Pedido de Cotação</h2>
       </div>
 
+      {projeto && (
+        <div className="np-projeto-banner">
+          <FaBuilding />
+          <div>
+            <span className="np-projeto-banner__label">Projeto</span>
+            <span className="np-projeto-banner__nome">{projeto.nome}</span>
+          </div>
+          {(projeto.cidade || projeto.estado) && (
+            <span className="np-projeto-banner__local">
+              {[projeto.cidade, projeto.estado].filter(Boolean).join(', ')}
+            </span>
+          )}
+        </div>
+      )}
+
       <form className="np-form" onSubmit={handleGerar}>
 
         <section className="np-section">
           <h3 className="np-section-title">Dados do Empreendimento</h3>
+          {projeto && (
+            <p className="np-section-hint">
+              Campos preenchidos automaticamente pelo projeto. Edite se necessário.
+            </p>
+          )}
           <div className="np-grid-2">
-            <div className="np-field">
+            <div className="np-field np-field--full">
               <label>Nome do Empreendimento</label>
               <input type="text" value={nomeEmpreendimento} onChange={e => setNomeEmpreendimento(e.target.value)} placeholder="Ex.: Residencial Parque Verde" required />
+            </div>
+            <div className="np-field">
+              <label>Razão Social</label>
+              <input type="text" value={razaoSocial} onChange={e => setRazaoSocial(e.target.value)} placeholder="Ex.: Construtora ABC Ltda" />
             </div>
             <div className="np-field">
               <label>CNPJ</label>
@@ -312,13 +342,63 @@ export default function NovoPedidoForm() {
         </section>
 
         <div className="np-footer">
-          <button type="submit" className="btn-gerar" disabled={salvando}>
-            <FaLink />
-            {salvando ? 'Gerando...' : 'Gerar Links de Cotação'}
+          <button
+            type="submit"
+            className={`btn-gerar ${linksGerados.length > 0 ? 'btn-gerar--done' : ''}`}
+            disabled={salvando || linksGerados.length > 0}
+          >
+            {linksGerados.length > 0
+              ? <><FaCheck /> Pedido criado!</>
+              : salvando
+              ? <><FaLink /> Gerando...</>
+              : <><FaLink /> Gerar Links de Cotação</>
+            }
           </button>
         </div>
 
       </form>
+
+      {/* ── LINKS INLINE abaixo do form ───────────────────────── */}
+      {linksGerados.length > 0 && (
+        <div id="np-links-section" className="np-links-section">
+          <div className="np-links-section__header">
+            <div className="np-links-check-icon"><FaCheck /></div>
+            <div>
+              <h3>Links gerados com sucesso!</h3>
+              <p>Copie e envie para cada fornecedor. Cada link é único e exclusivo.</p>
+            </div>
+          </div>
+
+          <div className="np-links-lista">
+            {linksGerados.map(l => (
+              <div key={l.token} className="np-link-item">
+                <div className="np-link-info">
+                  <strong>{l.fornecedor.nome}</strong>
+                  <span>{l.fornecedor.empresa}</span>
+                </div>
+                <div className="np-link-url">{l.link}</div>
+                <button
+                  className={`btn-copiar ${copiado === l.token ? 'copiado' : ''}`}
+                  onClick={() => copiarLink(l.token, l.link)}
+                >
+                  {copiado === l.token ? <FaCheck /> : <FaCopy />}
+                  {copiado === l.token ? 'Copiado!' : 'Copiar'}
+                </button>
+              </div>
+            ))}
+          </div>
+
+          <div className="np-links-acoes">
+            <button className="btn-copiar-todos" onClick={copiarTodos}>
+              {copiado === 'todos' ? <FaCheck /> : <FaCopy />}
+              {copiado === 'todos' ? 'Copiado!' : 'Copiar todos os links'}
+            </button>
+            <button className="btn-voltar-lista" onClick={voltarParaPedidos}>
+              Ver todos os pedidos
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

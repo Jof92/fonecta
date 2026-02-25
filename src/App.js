@@ -4,6 +4,7 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
+  Navigate,
   useLocation,
 } from 'react-router-dom'
 
@@ -22,10 +23,16 @@ import maoImg from './assets/mao.png'
 import empiImg from './assets/empi.png'
 import onboxImg from './assets/onbox.png'
 import HomePage from './components/HomePage'
-import PedidosPage from './components/Pedidospage'
+
+// Páginas antigas (mantidas para compatibilidade)
 import NovoPedidoForm from './components/NovoPedidoForm'
 import PedidoResultados from './components/PedidoResultados'
 import RespostaFornecedor from './components/RespostaFornecedor'
+
+// Novas páginas
+import ProjetosPage from './components/ProjetosPage'
+import ProjetoPedidosPage from './components/ProjetoPedidosPage'
+import PedidoDetalhesPage from './components/PedidoDetalhesPage'
 
 import './App.css'
 
@@ -201,10 +208,21 @@ function AppContent({ tema, setTema }) {
               path="/cadastro-externo"
               element={<CadastroFornecedor adicionarNovoCadastro={adicionarNovoCadastro} />}
             />
-            <Route path="/pedidos" element={<PedidosPage />} />
-            <Route path="/pedidos/novo" element={<NovoPedidoForm />} />
+
+            {/* ─── PROJETOS ──────────────────────────────────────────── */}
+            <Route path="/projetos" element={<ProjetosPage />} />
+            <Route path="/projetos/:projetoId/pedidos" element={<ProjetoPedidosPage />} />
+            <Route path="/projetos/:projetoId/pedidos/novo" element={<NovoPedidoForm />} />
+
+            {/* ─── PEDIDO INDIVIDUAL ─────────────────────────────────── */}
+            <Route path="/pedidos/:id" element={<PedidoDetalhesPage />} />
             <Route path="/pedidos/:id/resultados" element={<PedidoResultados />} />
-            <Route path="/cotacao/:token" element={<RespostaFornecedor />} /> 
+
+            {/* /pedidos redireciona para /projetos */}
+            <Route path="/pedidos" element={<Navigate to="/projetos" replace />} />
+
+            {/* ─── DEMAIS ────────────────────────────────────────────── */}
+            <Route path="/cotacao/:token" element={<RespostaFornecedor />} />
             <Route path="/home" element={<HomePage nomeUsuario="Fulano" />} />
             <Route path="/cnpj" element={<Cnpj />} />
             <Route

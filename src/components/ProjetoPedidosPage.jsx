@@ -1,33 +1,40 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
-import { FaPlus, FaEye, FaTrash, FaClipboardList } from 'react-icons/fa'
+import { FaPlus, FaEye, FaTrash, FaClipboardList, FaArrowLeft, FaBuilding } from 'react-icons/fa'
 import './Pedidospage.css'
 
-export default function PedidosPage() {
+export default function ProjetoPedidosPage() {
   const navigate = useNavigate()
+  const { projetoId } = useParams()
+
+  const [projeto, setProjeto] = useState(null)
   const [pedidos, setPedidos] = useState([])
   const [carregando, setCarregando] = useState(true)
 
   useEffect(() => {
-    buscarPedidos()
-  }, [])
+    buscarDados()
+  }, [projetoId])
 
-  async function buscarPedidos() {
+  async function buscarDados() {
     setCarregando(true)
-    const { data, error } = await supabase
-      .from('pedidos')
-      .select('*, pedido_fornecedores(id, respondido)')
-      .order('created_at', { ascending: false })
-
-    if (!error) setPedidos(data || [])
+    const [{ data: proj }, { data: peds, error }] = await Promise.all([
+      supabase.from('projetos').select('*').eq('id', projetoId).single(),
+      supabase
+        .from('pedidos')
+        .select('*, pedido_fornecedores(id, respondido)')
+        .eq('projeto_id', projetoId)
+        .order('created_at', { ascending: false }),
+    ])
+    if (proj) setProjeto(proj)
+    if (!error) setPedidos(peds || [])
     setCarregando(false)
   }
 
   async function deletarPedido(id) {
     if (!window.confirm('Excluir este pedido? Todos os dados serão perdidos.')) return
     await supabase.from('pedidos').delete().eq('id', id)
-    buscarPedidos()
+    buscarDados()
   }
 
   function formatarData(data) {
@@ -45,12 +52,31 @@ export default function PedidosPage() {
 
   return (
     <div className="pedidos-page">
+      {/* BREADCRUMB */}
+      <div className="pedidos-breadcrumb">
+        <button className="btn-back" onClick={() => navigate('/projetos')}>
+          <FaArrowLeft /> Projetos
+        </button>
+        <span className="breadcrumb-sep">/</span>
+        <span className="breadcrumb-atual">
+          <FaBuilding /> {projeto?.nome || '...'}
+        </span>
+      </div>
+
       <div className="pedidos-topbar">
         <div className="pedidos-topbar__titulo">
           <FaClipboardList />
-          <h2>Pedidos de Cotação</h2>
+          <div>
+            <h2>Pedidos de Cotação</h2>
+            {projeto?.razao_social && (
+              <p className="pedidos-topbar__sub">{projeto.razao_social}</p>
+            )}
+          </div>
         </div>
-        <button className="btn-novo-pedido" onClick={() => navigate('/pedidos/novo')}>
+        <button
+          className="btn-novo-pedido"
+          onClick={() => navigate(`/projetos/${projetoId}/pedidos/novo`)}
+        >
           <FaPlus /> Novo Pedido
         </button>
       </div>
@@ -60,8 +86,11 @@ export default function PedidosPage() {
       ) : pedidos.length === 0 ? (
         <div className="pedidos-empty">
           <FaClipboardList size={48} />
-          <p>Nenhum pedido criado ainda.</p>
-          <button className="btn-novo-pedido" onClick={() => navigate('/pedidos/novo')}>
+          <p>Nenhum pedido neste projeto.</p>
+          <button
+            className="btn-novo-pedido"
+            onClick={() => navigate(`/projetos/${projetoId}/pedidos/novo`)}
+          >
             <FaPlus /> Criar primeiro pedido
           </button>
         </div>
@@ -81,11 +110,12 @@ export default function PedidosPage() {
             <tbody>
               {pedidos.map(p => {
                 const { respondidos, total } = contarRespostas(p.pedido_fornecedores)
-                const statusClass = respondidos === total && total > 0
-                  ? 'status--completo'
-                  : respondidos > 0
-                  ? 'status--parcial'
-                  : 'status--aguardando'
+                const statusClass =
+                  respondidos === total && total > 0
+                    ? 'status--completo'
+                    : respondidos > 0
+                    ? 'status--parcial'
+                    : 'status--aguardando'
 
                 return (
                   <tr key={p.id}>
@@ -100,9 +130,10 @@ export default function PedidosPage() {
                     </td>
                     <td>
                       <div className="td-acoes">
+                        {/* VER DETALHES DO PEDIDO */}
                         <button
                           className="btn-acao btn-acao--ver"
-                          title="Ver resultados"
+                          title="Ver pedido"
                           onClick={() => navigate(`/pedidos/${p.id}`)}
                         >
                           <FaEye />
