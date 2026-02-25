@@ -1,0 +1,217 @@
+.pedidos-page {
+  padding: 1.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  animation: fadeUp 0.4s ease both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Topbar ─────────────────────────────────────────────── */
+.pedidos-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.8rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.pedidos-topbar__titulo {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.pedidos-topbar__titulo h2 {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #ffffff !important;
+}
+
+.pedidos-topbar__titulo svg {
+  color: #4fa3ff !important;
+  font-size: 1.3rem;
+}
+
+/* ── Botão novo pedido ──────────────────────────────────── */
+.btn-novo-pedido {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1.2rem;
+  background: #0066cc;
+  color: #ffffff !important;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.btn-novo-pedido:hover {
+  background: #004a99;
+  transform: translateY(-1px);
+}
+
+/* ── Estados ────────────────────────────────────────────── */
+.pedidos-loading,
+.pedidos-empty {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.6) !important;
+  padding: 4rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.pedidos-empty svg {
+  opacity: 0.3;
+}
+
+/* ── Tabela wrapper ─────────────────────────────────────── */
+.pedidos-tabela-wrapper {
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+}
+
+.pedidos-tabela {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+/* ── Cabeçalho ──────────────────────────────────────────── */
+.pedidos-tabela thead tr {
+  background: rgba(0, 0, 0, 0.4);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.pedidos-tabela th {
+  padding: 0.9rem 1rem;
+  text-align: left;
+  color: #4fa3ff !important;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* ── Linhas ─────────────────────────────────────────────── */
+.pedidos-tabela tbody tr {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  transition: background 0.15s ease;
+}
+
+.pedidos-tabela tbody tr:last-child {
+  border-bottom: none;
+}
+
+.pedidos-tabela tbody tr:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.pedidos-tabela td {
+  padding: 0.9rem 1rem;
+  color: #cccccc !important;
+  vertical-align: middle;
+}
+
+.td-empreendimento {
+  font-weight: 700;
+  color: #ffffff !important;
+  font-size: 0.95rem;
+}
+
+.td-mono {
+  font-family: 'Courier New', monospace;
+  font-size: 0.83rem;
+  color: rgba(200, 200, 200, 0.55) !important;
+}
+
+/* ── Status badge ───────────────────────────────────────── */
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.status--completo {
+  background: rgba(45, 180, 100, 0.2);
+  color: #4fc38a !important;
+  border: 1px solid rgba(45, 180, 100, 0.35);
+}
+
+.status--parcial {
+  background: rgba(255, 165, 0, 0.18);
+  color: #ffa940 !important;
+  border: 1px solid rgba(255, 165, 0, 0.35);
+}
+
+.status--aguardando {
+  background: rgba(180, 180, 180, 0.1);
+  color: #aaaaaa !important;
+  border: 1px solid rgba(180, 180, 180, 0.2);
+}
+
+/* ── Ações ──────────────────────────────────────────────── */
+.td-acoes {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-acao {
+  width: 34px;
+  height: 34px;
+  border-radius: 7px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease, transform 0.15s ease;
+  font-size: 0.85rem;
+}
+
+.btn-acao:hover {
+  transform: translateY(-1px);
+}
+
+.btn-acao--ver {
+  background: rgba(79, 163, 255, 0.18);
+  color: #4fa3ff !important;
+}
+
+.btn-acao--ver:hover {
+  background: rgba(79, 163, 255, 0.35);
+}
+
+.btn-acao--del {
+  background: rgba(220, 53, 69, 0.15);
+  color: #e06c75 !important;
+}
+
+.btn-acao--del:hover {
+  background: rgba(220, 53, 69, 0.3);
+}
+
+@media (max-width: 600px) {
+  .pedidos-page { padding: 1rem; }
+  .pedidos-tabela th,
+  .pedidos-tabela td { padding: 0.65rem 0.6rem; font-size: 0.8rem; }
+}

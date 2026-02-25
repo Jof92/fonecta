@@ -15,6 +15,7 @@ export default function Header({ mostrarLogin, setMostrarLogin, user, setUser, t
 
   const estaNaBusca = pathname.startsWith('/busca');
   const estaNaHome = pathname === '/';
+  const estaNaHomePage = pathname === '/home';
   const estaNoCadastroExterno = pathname === '/cadastro-externo';
   const estaNaAdmin = pathname === '/admin';
 
@@ -110,6 +111,12 @@ export default function Header({ mostrarLogin, setMostrarLogin, user, setUser, t
     navigate('/');
   }
 
+  // Navega para /home se já passou do login, senão vai para /
+  function handleLogoClick() {
+    if (estaNaHome) return; // na landing, o logo não faz nada (tem o botão de login)
+    navigate('/home');
+  }
+
   async function handleFileChange(event) {
     const file = event.target.files[0];
     if (!file) return;
@@ -146,13 +153,24 @@ export default function Header({ mostrarLogin, setMostrarLogin, user, setUser, t
   return (
     <header className="app-header">
       <div className="header-left">
-        <img src={logoFonecta} alt="Logo Fonecta" className="logo-fonecta" />
-        <h1 className="fonecta-title">FONECTA</h1>
+        <img
+          src={logoFonecta}
+          alt="Logo Fonecta"
+          className={`logo-fonecta ${!estaNaHome ? 'logo-fonecta--clicavel' : ''}`}
+          onClick={handleLogoClick}
+          title={!estaNaHome ? 'Ir para Home' : undefined}
+        />
+        <h1
+          className={`fonecta-title ${!estaNaHome ? 'fonecta-title--clicavel' : ''}`}
+          onClick={handleLogoClick}
+        >
+          FONECTA
+        </h1>
       </div>
 
       {!estaNoCadastroExterno && (
         <div className="header-right">
-          {(estaNaAdmin || estaNaBusca) && (
+          {(estaNaAdmin || estaNaBusca || estaNaHomePage) && (
             <div ref={gearRef} className="gear-container">
               <button
                 onClick={() => setMenuAbertoTema(prev => !prev)}
@@ -213,6 +231,17 @@ export default function Header({ mostrarLogin, setMostrarLogin, user, setUser, t
             </div>
           )}
 
+          {estaNaHomePage && (
+            <div className="busca-logo">
+              <img src={logoParceira} alt="Logo Parceira" className="logo-parceira clickable" onClick={toggleMenuLogo} />
+              {mostrarMenuLogo && (
+                <div ref={menuRef} className="menu-logo-busca">
+                  <button onClick={sair} className="menu-logo-item sair">Sair</button>
+                </div>
+              )}
+            </div>
+          )}
+
           {estaNaHome && (
             <button
               onClick={toggleLogin}
@@ -226,7 +255,7 @@ export default function Header({ mostrarLogin, setMostrarLogin, user, setUser, t
             </button>
           )}
 
-          {!estaNaHome && !estaNaAdmin && !estaNaBusca && (
+          {!estaNaHome && !estaNaAdmin && !estaNaBusca && !estaNaHomePage && (
             <img src={logoParceiraDefault} alt="Logo Parceira" className="logo-parceira" />
           )}
         </div>

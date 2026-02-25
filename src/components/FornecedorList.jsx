@@ -205,7 +205,7 @@ export default function FornecedorList() {
     if (!tipo) return <FaTags style={{ color: '#B197FC' }} title="Tags" />
     const t = tipo.toLowerCase()
     if (t.includes('material') && t.includes('servico'))
-      return <IconWorker style={{ width: 20, height: 20, color: '#B197FC' }} title="Material e Serviço" />
+      return <IconWorker style={{ width: 20, height: 20, fill:"#B197FC" }} title="Material e Serviço" />
     if (t.includes('material'))
       return <MdOutlineHandyman style={{ width: 20, height: 20, color: '#B197FC' }} title="Material" />
     if (t.includes('servico'))

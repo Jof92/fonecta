@@ -1,0 +1,571 @@
+.novo-pedido-page {
+  padding: 1.5rem;
+  max-width: 960px;
+  margin: 0 auto;
+  animation: np-fadeUp 0.4s ease both;
+}
+
+@keyframes np-fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Topbar ─────────────────────────────────────────────── */
+.np-topbar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.np-topbar h2 {
+  margin: 0;
+  color: #ffffff !important;
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.np-btn-voltar {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  background: rgba(0, 0, 0, 0.35);
+  color: #cccccc !important;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.np-btn-voltar:hover {
+  background: rgba(0, 0, 0, 0.55);
+  color: #ffffff !important;
+}
+
+/* ── Seções ─────────────────────────────────────────────── */
+.np-section {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1.4rem 1.6rem;
+  margin-bottom: 1.4rem;
+  backdrop-filter: blur(6px);
+}
+
+.np-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.np-section-title {
+  margin: 0 0 1rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #4fa3ff !important;
+}
+
+.np-section-header .np-section-title {
+  margin-bottom: 0;
+}
+
+/* ── Grid 2 colunas ─────────────────────────────────────── */
+.np-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 600px) {
+  .np-grid-2 { grid-template-columns: 1fr; }
+}
+
+/* ── Campos ─────────────────────────────────────────────── */
+.np-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.np-field label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: rgba(200, 200, 200, 0.65) !important;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.np-field input {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 0.6rem 0.85rem;
+  color: #ffffff !important;
+  font-size: 0.92rem;
+  outline: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.np-field input:focus {
+  border-color: #0066cc;
+  background: rgba(0, 102, 204, 0.08);
+}
+
+.np-field input::placeholder {
+  color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* ── Tabela insumos ─────────────────────────────────────── */
+.np-insumos-tabela-wrapper {
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  margin-top: 0.5rem;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.np-insumos-tabela {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.np-insumos-tabela thead tr {
+  background: rgba(0, 0, 0, 0.35);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.np-insumos-tabela th {
+  padding: 0.7rem 0.75rem;
+  text-align: left;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #4fa3ff !important;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.np-insumos-tabela td {
+  padding: 0.35rem 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.np-insumos-tabela tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.np-input-tabela {
+  width: 100%;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  padding: 0.45rem 0.5rem;
+  color: #e0e0e0 !important;
+  font-size: 0.88rem;
+  outline: none;
+  transition: border-color 0.15s, background 0.15s;
+  box-sizing: border-box;
+}
+
+.np-input-tabela:focus {
+  border-color: rgba(0, 102, 204, 0.6);
+  background: rgba(0, 102, 204, 0.08);
+}
+
+.np-input-tabela::placeholder {
+  color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* ── Botões da tabela ───────────────────────────────────── */
+.btn-add {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.9rem;
+  background: rgba(0, 102, 204, 0.18);
+  color: #4fa3ff !important;
+  border: 1px solid rgba(0, 102, 204, 0.3);
+  border-radius: 7px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-add:hover {
+  background: rgba(0, 102, 204, 0.32);
+}
+
+.btn-remover-linha {
+  width: 28px;
+  height: 28px;
+  background: rgba(220, 53, 69, 0.12);
+  color: #e06c75 !important;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  transition: background 0.2s;
+}
+
+.btn-remover-linha:hover {
+  background: rgba(220, 53, 69, 0.28);
+}
+
+/* ── Busca fornecedores ─────────────────────────────────── */
+.np-busca-wrapper {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.np-busca-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.np-busca-icon {
+  position: absolute;
+  left: 0.85rem;
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 0.85rem;
+  pointer-events: none;
+}
+
+.np-busca-input {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 0.65rem 2.5rem 0.65rem 2.4rem;
+  color: #ffffff !important;
+  font-size: 0.92rem;
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.np-busca-input:focus {
+  border-color: #0066cc;
+}
+
+.np-busca-input::placeholder {
+  color: rgba(255, 255, 255, 0.22) !important;
+}
+
+.np-busca-clear {
+  position: absolute;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0;
+  font-size: 0.85rem;
+}
+
+.np-busca-clear:hover {
+  color: #ffffff;
+}
+
+.np-busca-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: #0f1a2e;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0.3rem 0;
+  z-index: 200;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+}
+
+.np-busca-loading {
+  padding: 0.6rem 1rem;
+  color: rgba(255, 255, 255, 0.4) !important;
+  font-size: 0.85rem;
+}
+
+.np-busca-item {
+  padding: 0.6rem 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  transition: background 0.15s;
+}
+
+.np-busca-item:hover {
+  background: rgba(0, 102, 204, 0.18);
+}
+
+.np-busca-nome {
+  font-weight: 600;
+  color: #e0e0e0 !important;
+  font-size: 0.88rem;
+}
+
+.np-busca-empresa {
+  color: rgba(200, 200, 200, 0.5) !important;
+  font-size: 0.8rem;
+}
+
+.np-busca-tags {
+  color: #4fa3ff !important;
+  font-size: 0.75rem;
+  margin-left: auto;
+}
+
+/* ── Chips de fornecedores ──────────────────────────────── */
+.np-fornecedores-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+}
+
+.np-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: rgba(0, 102, 204, 0.14);
+  border: 1px solid rgba(0, 102, 204, 0.28);
+  border-radius: 8px;
+  padding: 0.4rem 0.5rem 0.4rem 0.8rem;
+  animation: chipIn 0.2s ease;
+}
+
+@keyframes chipIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.np-chip-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+
+.np-chip-info strong {
+  font-size: 0.85rem;
+  color: #e0e0e0 !important;
+}
+
+.np-chip-info span {
+  font-size: 0.75rem;
+  color: rgba(200, 200, 200, 0.5) !important;
+}
+
+.np-chip-remove {
+  background: rgba(220, 53, 69, 0.15);
+  color: #e06c75 !important;
+  border: none;
+  border-radius: 5px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.7rem;
+  transition: background 0.2s;
+}
+
+.np-chip-remove:hover {
+  background: rgba(220, 53, 69, 0.3);
+}
+
+/* ── Footer / botão gerar ───────────────────────────────── */
+.np-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 0.5rem;
+}
+
+.btn-gerar {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75rem 2rem;
+  background: linear-gradient(135deg, #0066cc, #004a99);
+  color: #ffffff !important;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s;
+  box-shadow: 0 4px 20px rgba(0, 102, 204, 0.4);
+}
+
+.btn-gerar:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+.btn-gerar:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── Tela de links gerados ──────────────────────────────── */
+.np-links-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.np-links-check {
+  font-size: 3rem;
+  color: #4fc38a;
+  margin-bottom: 0.8rem;
+  display: block;
+  animation: popIn 0.4s ease;
+}
+
+@keyframes popIn {
+  from { transform: scale(0); }
+  to   { transform: scale(1); }
+}
+
+.np-links-header h2 {
+  margin: 0 0 0.4rem;
+  color: #ffffff !important;
+  font-size: 1.5rem;
+}
+
+.np-links-header p {
+  color: rgba(200, 200, 200, 0.6) !important;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.np-links-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-bottom: 1.5rem;
+}
+
+.np-link-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 0.9rem 1.1rem;
+  flex-wrap: wrap;
+  animation: np-fadeUp 0.3s ease both;
+}
+
+.np-link-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 160px;
+}
+
+.np-link-info strong {
+  color: #e0e0e0 !important;
+  font-size: 0.9rem;
+}
+
+.np-link-info span {
+  color: rgba(200, 200, 200, 0.5) !important;
+  font-size: 0.78rem;
+}
+
+.np-link-url {
+  flex: 1;
+  font-family: 'Courier New', monospace;
+  font-size: 0.78rem;
+  color: #4fa3ff !important;
+  background: rgba(0, 102, 204, 0.1);
+  padding: 0.4rem 0.7rem;
+  border-radius: 6px;
+  word-break: break-all;
+  border: 1px solid rgba(0, 102, 204, 0.2);
+}
+
+.btn-copiar {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.9rem;
+  background: rgba(0, 102, 204, 0.18);
+  color: #4fa3ff !important;
+  border: 1px solid rgba(0, 102, 204, 0.3);
+  border-radius: 7px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+
+.btn-copiar:hover {
+  background: rgba(0, 102, 204, 0.32);
+}
+
+.btn-copiar.copiado {
+  background: rgba(45, 180, 100, 0.2);
+  color: #4fc38a !important;
+  border-color: rgba(45, 180, 100, 0.3);
+}
+
+.np-links-acoes {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-copiar-todos {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.5rem;
+  background: #0066cc;
+  color: #ffffff !important;
+  border: none;
+  border-radius: 9px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-copiar-todos:hover {
+  background: #004a99;
+}
+
+.btn-voltar-lista {
+  padding: 0.65rem 1.5rem;
+  background: rgba(0, 0, 0, 0.3);
+  color: #cccccc !important;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 9px;
+  font-size: 0.92rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-voltar-lista:hover {
+  background: rgba(0, 0, 0, 0.5);
+  color: #ffffff !important;
+}

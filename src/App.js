@@ -21,6 +21,11 @@ import caixaImg from './assets/caixa.png'
 import maoImg from './assets/mao.png'
 import empiImg from './assets/empi.png'
 import onboxImg from './assets/onbox.png'
+import HomePage from './components/HomePage'
+import PedidosPage from './components/Pedidospage'
+import NovoPedidoForm from './components/NovoPedidoForm'
+import PedidoResultados from './components/PedidoResultados'
+import RespostaFornecedor from './components/RespostaFornecedor'
 
 
 // Importa a engrenagem SVG como componente React
@@ -200,6 +205,11 @@ function AppContent({ tema, setTema }) {
               path="/cadastro-externo"
               element={<CadastroFornecedor adicionarNovoCadastro={adicionarNovoCadastro} />}
             />
+            <Route path="/pedidos" element={<PedidosPage />} />
+            <Route path="/pedidos/novo" element={<NovoPedidoForm />} />
+            <Route path="/pedidos/:id/resultados" element={<PedidoResultados />} />
+            <Route path="/cotacao/:token" element={<RespostaFornecedor />} /> 
+            <Route path="/home" element={<HomePage nomeUsuario="Fulano" />} />
             <Route path="/cnpj" element={<Cnpj />} />
             <Route
               path="*"

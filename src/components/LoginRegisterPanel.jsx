@@ -54,15 +54,15 @@ export default function LoginRegisterPanel({ onLoginSuccess }) {
       return
     }
 
-    setMensagem('Login bem-sucedido!')
     onLoginSuccess?.(data.user)
 
-    if (perfilData.perfil === 'admin') {
-      navigate('/admin')
-    } else if (perfilData.perfil === 'buscador') {
-      navigate('/busca')
-    } else if (perfilData.perfil === 'pendente') {
+    if (perfilData.perfil === 'pendente') {
       setMensagem('Cadastro pendente: aguarde aprovação ou insira o código correto.')
+      return
+    }
+
+    if (perfilData.perfil === 'admin' || perfilData.perfil === 'buscador') {
+      navigate('/home')
     } else {
       setMensagem('Perfil inválido no cadastro.')
     }
@@ -83,11 +83,10 @@ export default function LoginRegisterPanel({ onLoginSuccess }) {
       return
     }
 
-    // Cadastro sem esperar confirmação de email
     const { data, error } = await supabase.auth.signUp({
       email: form.email,
       password: form.senha,
-      options: { emailRedirectTo: window.location.origin } // evita problemas com redirecionamento
+      options: { emailRedirectTo: window.location.origin }
     })
 
     if (error) {
@@ -97,18 +96,18 @@ export default function LoginRegisterPanel({ onLoginSuccess }) {
 
     const userId = data.user?.id
     if (!userId) {
-      setMensagem('Erro: usuário não retornado no cadastro.')
+      setMensagem('Verifique seu email e confirme o cadastro antes de fazer login.')
+      setModo('login')
       return
     }
 
-    // Atualiza o perfil pendente criado pelo trigger
     const { error: errorProfile } = await supabase
       .from('profiles')
       .update({
         nome: form.nome,
         empresa: form.empresa,
         setor: form.setor,
-        perfil, // 'admin' ou 'buscador'
+        perfil,
       })
       .eq('id', userId)
 
@@ -117,17 +116,8 @@ export default function LoginRegisterPanel({ onLoginSuccess }) {
       return
     }
 
-    setMensagem(`Usuário ${perfil} cadastrado com sucesso!Vá até o email cadastrado e confirme.`)
-
-    setForm({
-      email: '',
-      senha: '',
-      nome: '',
-      empresa: '',
-      setor: '',
-      codigo: '',
-    })
-
+    setMensagem(`Usuário ${perfil} cadastrado com sucesso! Confirme seu email e faça login.`)
+    setForm({ email: '', senha: '', nome: '', empresa: '', setor: '', codigo: '' })
     setModo('login')
   }
 

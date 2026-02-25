@@ -250,3 +250,15 @@
   word-break: break-word;
 }
 
+/* Cole isso no seu Header.css */
+
+.logo-fonecta--clicavel,
+.fonecta-title--clicavel {
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.logo-fonecta--clicavel:hover,
+.fonecta-title--clicavel:hover {
+  opacity: 0.75;
+}

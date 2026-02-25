@@ -1,0 +1,250 @@
+/* ── Layout ─────────────────────────────────────────────── */
+.home-wrapper {
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── Blobs decorativos ──────────────────────────────────── */
+.home-blob {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.home-blob--1 {
+  top: -80px;
+  right: -80px;
+  width: 340px;
+  height: 340px;
+  background: radial-gradient(circle, rgba(0, 102, 204, 0.15) 0%, transparent 70%);
+}
+
+.home-blob--2 {
+  bottom: -60px;
+  left: -60px;
+  width: 260px;
+  height: 260px;
+  background: radial-gradient(circle, rgba(90, 61, 122, 0.15) 0%, transparent 70%);
+}
+
+/* ── Header / Saudação ──────────────────────────────────── */
+.home-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+  opacity: 0;
+  transform: translateY(-16px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.home-header--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.home-saudacao {
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 0.3rem;
+}
+
+.home-nome {
+  color: #4fa3ff;
+}
+
+.home-subtexto {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.55);
+  margin: 0;
+}
+
+/* ── Grid de cards ──────────────────────────────────────── */
+.home-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.2rem;
+  width: 100%;
+  max-width: 860px;
+}
+
+/* ── Card base ──────────────────────────────────────────── */
+.home-card {
+  position: relative;
+  border: 1.5px solid;
+  border-radius: 16px;
+  padding: 1.8rem 1.4rem;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background: transparent;
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  outline: none;
+  overflow: hidden;
+
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.45s ease,
+    transform 0.3s ease,
+    background 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.home-card--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.home-card:hover {
+  transform: translateY(-6px) scale(1.02);
+}
+
+.home-card--breve {
+  cursor: not-allowed;
+  opacity: 0.6 !important;
+}
+
+.home-card--breve:hover {
+  transform: none;
+}
+
+/* ── Cores por variante ─────────────────────────────────── */
+.home-card--blue {
+  border-color: rgba(0, 102, 204, 0.4);
+  background: linear-gradient(135deg, rgba(0, 102, 204, 0.12), rgba(0, 74, 153, 0.08));
+}
+.home-card--blue:hover {
+  border-color: #0066cc;
+  background: linear-gradient(135deg, rgba(0, 102, 204, 0.55), rgba(0, 74, 153, 0.4));
+  box-shadow: 0 12px 40px rgba(0, 102, 204, 0.35);
+}
+.home-card--blue .home-card__icone { color: #4fa3ff; }
+.home-card--blue:hover .home-card__icone { color: #fff; }
+
+.home-card--green {
+  border-color: rgba(45, 122, 79, 0.4);
+  background: linear-gradient(135deg, rgba(45, 122, 79, 0.12), rgba(31, 90, 57, 0.08));
+}
+.home-card--green:hover {
+  border-color: #2d7a4f;
+  background: linear-gradient(135deg, rgba(45, 122, 79, 0.55), rgba(31, 90, 57, 0.4));
+  box-shadow: 0 12px 40px rgba(45, 122, 79, 0.35);
+}
+.home-card--green .home-card__icone { color: #4fc38a; }
+.home-card--green:hover .home-card__icone { color: #fff; }
+
+.home-card--orange {
+  border-color: rgba(180, 90, 30, 0.4);
+  background: linear-gradient(135deg, rgba(180, 90, 30, 0.12), rgba(140, 60, 15, 0.08));
+}
+.home-card--orange:hover {
+  border-color: #b45a1e;
+  background: linear-gradient(135deg, rgba(180, 90, 30, 0.55), rgba(140, 60, 15, 0.4));
+  box-shadow: 0 12px 40px rgba(180, 90, 30, 0.35);
+}
+.home-card--orange .home-card__icone { color: #f0944d; }
+.home-card--orange:hover .home-card__icone { color: #fff; }
+
+.home-card--purple {
+  border-color: rgba(90, 61, 122, 0.4);
+  background: linear-gradient(135deg, rgba(90, 61, 122, 0.12), rgba(61, 45, 90, 0.08));
+}
+.home-card--purple:hover {
+  border-color: #5a3d7a;
+  background: linear-gradient(135deg, rgba(90, 61, 122, 0.55), rgba(61, 45, 90, 0.4));
+  box-shadow: 0 12px 40px rgba(90, 61, 122, 0.35);
+}
+.home-card--purple .home-card__icone { color: #a07ed1; }
+.home-card--purple:hover .home-card__icone { color: #fff; }
+
+/* ── Barra destaque (card principal) ────────────────────── */
+.home-card--destaque .home-card__barra {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #0066cc, #4fa3ff);
+  border-radius: 16px 16px 0 0;
+}
+
+/* ── Badge "Em breve" ───────────────────────────────────── */
+.home-card__badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #aaa;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 2px 8px;
+  border-radius: 20px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* ── Conteúdo do card ───────────────────────────────────── */
+.home-card__icone {
+  margin-bottom: 0.4rem;
+  transition: color 0.3s ease;
+}
+
+.home-card__label {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.2;
+  color: #e0e0e0;
+  transition: color 0.3s ease;
+}
+
+.home-card:hover .home-card__label {
+  color: #fff;
+}
+
+.home-card__desc {
+  font-size: 0.82rem;
+  margin: 0;
+  line-height: 1.4;
+  color: rgba(200, 200, 200, 0.65);
+  transition: color 0.3s ease;
+}
+
+.home-card:hover .home-card__desc {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+/* ── Rodapé ─────────────────────────────────────────────── */
+.home-rodape {
+  margin-top: 2.5rem;
+  font-size: 0.78rem;
+  color: #fff;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0;
+  transition: opacity 0.8s ease 0.5s;
+}
+
+.home-rodape--visible {
+  opacity: 0.35;
+}
+
+/* ── Responsivo ─────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .home-saudacao {
+    font-size: 1.4rem;
+  }
+
+  .home-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,414 @@
+/* ── Isolamento de tema ─────────────────────────────────────
+   Esta página usa tema escuro próprio, independente do tema
+   global do app, para garantir contraste correto sempre.
+──────────────────────────────────────────────────────────── */
+
+.pr-page {
+  padding: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  animation: pr-fadeUp 0.4s ease both;
+  /* Forçar cor de texto escuro-base aqui */
+  color: #e0e0e0;
+}
+
+@keyframes pr-fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Topbar ─────────────────────────────────────────────── */
+.pr-topbar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.pr-topbar__info {
+  flex: 1;
+}
+
+.pr-topbar__info h2 {
+  margin: 0 0 0.2rem;
+  color: #ffffff;
+  font-size: 1.3rem;
+  font-weight: 700;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+}
+
+.pr-topbar__info span {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.pr-btn-voltar {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  background: rgba(0, 0, 0, 0.35);
+  color: #ddd;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  white-space: nowrap;
+  backdrop-filter: blur(4px);
+}
+
+.pr-btn-voltar:hover {
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+}
+
+.pr-btn-refresh {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.3);
+  color: rgba(255,255,255,0.5);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background 0.2s, color 0.2s, transform 0.2s;
+}
+
+.pr-btn-refresh:hover {
+  background: rgba(0,0,0,0.5);
+  color: #fff;
+  transform: rotate(180deg);
+}
+
+/* ── Loading ────────────────────────────────────────────── */
+.pr-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 4rem;
+  color: rgba(255,255,255,0.5);
+  font-size: 0.9rem;
+}
+
+.pr-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid rgba(255,255,255,0.1);
+  border-top-color: #4fa3ff;
+  border-radius: 50%;
+  animation: pr-spin 0.7s linear infinite;
+}
+
+@keyframes pr-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Status row ─────────────────────────────────────────── */
+.pr-status-row {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 1.4rem;
+  flex-wrap: wrap;
+}
+
+.pr-status-card {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+}
+
+.pr-status-card strong {
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.pr-status-card span {
+  font-size: 0.78rem;
+  opacity: 0.85;
+}
+
+.pr-status-card--ok {
+  background: rgba(45, 180, 100, 0.18);
+  color: #4fc38a;
+  border: 1px solid rgba(45, 180, 100, 0.3);
+}
+
+.pr-status-card--pendente {
+  background: rgba(255, 165, 0, 0.15);
+  color: #ffa940;
+  border: 1px solid rgba(255, 165, 0, 0.3);
+}
+
+.pr-pendentes-lista {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.pr-pendente-chip {
+  background: rgba(0,0,0,0.25);
+  color: rgba(255,255,255,0.55);
+  font-size: 0.75rem;
+  padding: 3px 10px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+/* ── Sem respostas ──────────────────────────────────────── */
+.pr-sem-respostas {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 4rem 1rem;
+  text-align: center;
+  color: rgba(255,255,255,0.35);
+}
+
+.pr-sem-respostas p {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.5);
+}
+
+.pr-sem-respostas span {
+  font-size: 0.82rem;
+}
+
+/* ── Tabela wrapper ─────────────────────────────────────── */
+.pr-tabela-wrapper {
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 1rem;
+  background: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+}
+
+.pr-tabela {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+/* ── Cabeçalho ──────────────────────────────────────────── */
+.pr-tabela thead tr {
+  background: rgba(0, 0, 0, 0.4);
+  border-bottom: 2px solid rgba(255,255,255,0.1);
+}
+
+.pr-tabela th {
+  padding: 1rem 0.9rem 0.7rem;
+  text-align: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(200, 200, 200, 0.55);
+  vertical-align: bottom;
+}
+
+.pr-th-insumo {
+  text-align: left !important;
+  color: #4fa3ff !important;
+  min-width: 200px;
+}
+
+.pr-th-qtd {
+  width: 65px;
+}
+
+.pr-th-fornecedor {
+  min-width: 150px;
+  border-left: 1px solid rgba(255,255,255,0.07);
+  padding-bottom: 0.8rem !important;
+}
+
+.pr-th--melhor {
+  background: rgba(240, 180, 41, 0.1) !important;
+  border-left: 2px solid rgba(240, 180, 41, 0.3) !important;
+}
+
+.pr-trophy {
+  color: #f0b429;
+  font-size: 1.1rem;
+  display: block;
+  margin-bottom: 0.4rem;
+}
+
+.pr-th-nome {
+  font-size: 0.85rem;
+  color: #fff;
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: 0;
+  line-height: 1.3;
+}
+
+.pr-th-empresa {
+  font-size: 0.73rem;
+  color: rgba(200,200,200,0.45);
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  margin-top: 3px;
+}
+
+/* ── Corpo ──────────────────────────────────────────────── */
+.pr-tabela tbody tr {
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  transition: background 0.15s;
+}
+
+.pr-tabela tbody tr:last-child {
+  border-bottom: none;
+}
+
+.pr-tabela tbody tr:hover {
+  background: rgba(255,255,255,0.04);
+}
+
+.pr-tabela td {
+  padding: 0.75rem 0.9rem;
+  color: #c8c8c8;
+  vertical-align: middle;
+}
+
+.pr-td-insumo {
+  font-weight: 500;
+  color: #eee !important;
+}
+
+.pr-codigo {
+  display: inline-block;
+  font-family: 'Courier New', monospace;
+  font-size: 0.7rem;
+  color: rgba(200,200,200,0.4);
+  background: rgba(255,255,255,0.06);
+  padding: 1px 6px;
+  border-radius: 4px;
+  margin-right: 7px;
+}
+
+.pr-td-num {
+  text-align: center;
+  color: rgba(200,200,200,0.45) !important;
+  font-size: 0.83rem;
+}
+
+/* ── Células de preço ───────────────────────────────────── */
+.pr-td-preco {
+  text-align: center;
+  font-weight: 600;
+  border-left: 1px solid rgba(255,255,255,0.05);
+  transition: background 0.15s;
+}
+
+.pr-td-preco--menor {
+  background: rgba(45, 180, 100, 0.13) !important;
+  color: #5dd99a !important;
+}
+
+.pr-td-preco--vazio {
+  color: rgba(255,255,255,0.2) !important;
+  font-weight: 400;
+}
+
+.pr-preco-valor {
+  font-size: 0.92rem;
+}
+
+.pr-obs {
+  font-size: 0.7rem;
+  color: rgba(200,200,200,0.38);
+  margin-top: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ── Linha de total ─────────────────────────────────────── */
+.pr-tr-total {
+  background: rgba(0,0,0,0.3) !important;
+  border-top: 2px solid rgba(255,255,255,0.12) !important;
+}
+
+.pr-td-total-label {
+  font-size: 0.72rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(200,200,200,0.45) !important;
+}
+
+.pr-td-total {
+  text-align: center;
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: #e0e0e0 !important;
+  border-left: 1px solid rgba(255,255,255,0.07);
+  padding: 1rem 0.9rem !important;
+}
+
+.pr-td-total--melhor {
+  color: #f0b429 !important;
+  background: rgba(240, 180, 41, 0.1);
+}
+
+.pr-trophy-small {
+  color: #f0b429;
+  font-size: 0.78rem;
+  margin-right: 5px;
+}
+
+/* ── Legenda ────────────────────────────────────────────── */
+.pr-legenda {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.4);
+  padding: 0.3rem 0 0.5rem;
+  flex-wrap: wrap;
+}
+
+.pr-legenda-menor {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  background: rgba(45, 180, 100, 0.2);
+  border: 1px solid rgba(45, 180, 100, 0.45);
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.pr-legenda-sep {
+  display: inline-block;
+  width: 1px;
+  height: 14px;
+  background: rgba(255,255,255,0.15);
+  margin: 0 0.5rem;
+}
+
+/* ── Responsivo ─────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .pr-page { padding: 1rem 0.75rem; }
+  .pr-tabela th,
+  .pr-tabela td { padding: 0.55rem 0.5rem; font-size: 0.78rem; }
+  .pr-topbar__info h2 { font-size: 1.1rem; }
+}
