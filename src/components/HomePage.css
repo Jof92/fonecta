@@ -17,22 +17,6 @@
   pointer-events: none;
 }
 
-.home-blob--1 {
-  top: -80px;
-  right: -80px;
-  width: 340px;
-  height: 340px;
-  background: radial-gradient(circle, rgba(0, 102, 204, 0.15) 0%, transparent 70%);
-}
-
-.home-blob--2 {
-  bottom: -60px;
-  left: -60px;
-  width: 260px;
-  height: 260px;
-  background: radial-gradient(circle, rgba(90, 61, 122, 0.15) 0%, transparent 70%);
-}
-
 /* ── Header / Saudação ──────────────────────────────────── */
 .home-header {
   text-align: center;
@@ -67,7 +51,7 @@
 /* ── Grid de cards ──────────────────────────────────────── */
 .home-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: 1.2rem;
   width: 100%;
   max-width: 860px;
@@ -76,15 +60,13 @@
 /* ── Card base ──────────────────────────────────────────── */
 .home-card {
   position: relative;
-  border: 1.5px solid;
+  border: 1.5px solid transparent;
   border-radius: 16px;
   padding: 1.8rem 1.4rem;
   text-align: left;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  background: transparent;
-  backdrop-filter: blur(8px);
   cursor: pointer;
   outline: none;
   overflow: hidden;
@@ -94,9 +76,8 @@
   transition:
     opacity 0.45s ease,
     transform 0.3s ease,
-    background 0.3s ease,
-    border-color 0.3s ease,
-    box-shadow 0.3s ease;
+    box-shadow 0.3s ease,
+    filter 0.3s ease;
 }
 
 .home-card--visible {
@@ -106,6 +87,7 @@
 
 .home-card:hover {
   transform: translateY(-6px) scale(1.02);
+  filter: brightness(1.12);
 }
 
 .home-card--breve {
@@ -115,56 +97,50 @@
 
 .home-card--breve:hover {
   transform: none;
+  filter: none;
 }
 
 /* ── Cores por variante ─────────────────────────────────── */
+
+/* Azul — card principal (Buscar Fornecedores) */
 .home-card--blue {
-  border-color: rgba(0, 102, 204, 0.4);
-  background: linear-gradient(135deg, rgba(0, 102, 204, 0.12), rgba(0, 74, 153, 0.08));
+  background: #1a4a8a;
+  border-color: #2563b0;
 }
 .home-card--blue:hover {
-  border-color: #0066cc;
-  background: linear-gradient(135deg, rgba(0, 102, 204, 0.55), rgba(0, 74, 153, 0.4));
-  box-shadow: 0 12px 40px rgba(0, 102, 204, 0.35);
+  box-shadow: 0 12px 40px rgba(37, 99, 176, 0.55);
 }
-.home-card--blue .home-card__icone { color: #4fa3ff; }
-.home-card--blue:hover .home-card__icone { color: #fff; }
+.home-card--blue .home-card__icone { color: #7ec8ff; }
 
+/* Verde — Consultar CNPJ */
 .home-card--green {
-  border-color: rgba(45, 122, 79, 0.4);
-  background: linear-gradient(135deg, rgba(45, 122, 79, 0.12), rgba(31, 90, 57, 0.08));
+  background: #1a5c38;
+  border-color: #22794a;
 }
 .home-card--green:hover {
-  border-color: #2d7a4f;
-  background: linear-gradient(135deg, rgba(45, 122, 79, 0.55), rgba(31, 90, 57, 0.4));
-  box-shadow: 0 12px 40px rgba(45, 122, 79, 0.35);
+  box-shadow: 0 12px 40px rgba(34, 121, 74, 0.55);
 }
-.home-card--green .home-card__icone { color: #4fc38a; }
-.home-card--green:hover .home-card__icone { color: #fff; }
+.home-card--green .home-card__icone { color: #5ee09a; }
 
+/* Laranja — Cadastrar Fornecedor */
 .home-card--orange {
-  border-color: rgba(180, 90, 30, 0.4);
-  background: linear-gradient(135deg, rgba(180, 90, 30, 0.12), rgba(140, 60, 15, 0.08));
+  background: #7a3510;
+  border-color: #a04a18;
 }
 .home-card--orange:hover {
-  border-color: #b45a1e;
-  background: linear-gradient(135deg, rgba(180, 90, 30, 0.55), rgba(140, 60, 15, 0.4));
-  box-shadow: 0 12px 40px rgba(180, 90, 30, 0.35);
+  box-shadow: 0 12px 40px rgba(160, 74, 24, 0.55);
 }
-.home-card--orange .home-card__icone { color: #f0944d; }
-.home-card--orange:hover .home-card__icone { color: #fff; }
+.home-card--orange .home-card__icone { color: #ffb07a; }
 
+/* Roxo — Pedidos */
 .home-card--purple {
-  border-color: rgba(90, 61, 122, 0.4);
-  background: linear-gradient(135deg, rgba(90, 61, 122, 0.12), rgba(61, 45, 90, 0.08));
+  background: #3d2566;
+  border-color: #5a3d8a;
 }
 .home-card--purple:hover {
-  border-color: #5a3d7a;
-  background: linear-gradient(135deg, rgba(90, 61, 122, 0.55), rgba(61, 45, 90, 0.4));
-  box-shadow: 0 12px 40px rgba(90, 61, 122, 0.35);
+  box-shadow: 0 12px 40px rgba(90, 61, 138, 0.55);
 }
-.home-card--purple .home-card__icone { color: #a07ed1; }
-.home-card--purple:hover .home-card__icone { color: #fff; }
+.home-card--purple .home-card__icone { color: #c4a0f0; }
 
 /* ── Barra destaque (card principal) ────────────────────── */
 .home-card--destaque .home-card__barra {
@@ -173,7 +149,7 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, #0066cc, #4fa3ff);
+  background: linear-gradient(90deg, #2563b0, #7ec8ff);
   border-radius: 16px 16px 0 0;
 }
 
@@ -185,7 +161,7 @@
   font-size: 0.68rem;
   font-weight: 600;
   color: #aaa;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.12);
   padding: 2px 8px;
   border-radius: 20px;
   letter-spacing: 0.05em;
@@ -203,24 +179,14 @@
   font-weight: 700;
   margin: 0;
   line-height: 1.2;
-  color: #e0e0e0;
-  transition: color 0.3s ease;
-}
-
-.home-card:hover .home-card__label {
-  color: #fff;
+  color: #ffffff;
 }
 
 .home-card__desc {
   font-size: 0.82rem;
   margin: 0;
   line-height: 1.4;
-  color: rgba(200, 200, 200, 0.65);
-  transition: color 0.3s ease;
-}
-
-.home-card:hover .home-card__desc {
-  color: rgba(255, 255, 255, 0.82);
+  color: rgba(255, 255, 255, 0.72);
 }
 
 /* ── Rodapé ─────────────────────────────────────────────── */

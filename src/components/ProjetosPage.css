@@ -4,7 +4,6 @@
 
 .projetos-page {
   min-height: 100vh;
-  background: #f5f6fa;
   padding: 32px 40px;
   font-family: 'Segoe UI', sans-serif;
 }
@@ -22,17 +21,24 @@
   gap: 16px;
 }
 .projetos-header__icon {
-  font-size: 2rem;
+  font-size: 2.7rem;
   color: #2563eb;
   background: #dbeafe;
   padding: 12px;
   border-radius: 12px;
+}
+
+.projetos-heade-text{
+ background: #dbeafe;
+ padding: 5px 20px;
+ border-radius: 10px;
 }
 .projetos-header__title {
   font-size: 1.75rem;
   font-weight: 700;
   color: #1e293b;
   margin: 0;
+  background: #dbeafe;
 }
 .projetos-header__sub {
   font-size: 0.875rem;
@@ -48,12 +54,13 @@
   background: #2563eb;
   color: #fff;
   border: none;
-  padding: 10px 20px;
+  padding: 24px 20px;
   border-radius: 8px;
-  font-size: 0.9rem;
+  font-size: 01.2rem;
   font-weight: 600;
   cursor: pointer;
   transition: background 0.2s, transform 0.1s;
+  margin-left: 20px;
 }
 .btn-novo-projeto:hover { background: #1d4ed8; transform: translateY(-1px); }
 .btn-novo-projeto:active { transform: translateY(0); }
@@ -90,7 +97,7 @@
 /* GRID */
 .projetos-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 20px;
 }
 

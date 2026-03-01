@@ -53,8 +53,6 @@ export default function HomePage({ nomeUsuario = 'Admin' }) {
 
   return (
     <div className="home-wrapper">
-      <div className="home-blob home-blob--1" />
-      <div className="home-blob home-blob--2" />
 
       <div className={`home-header ${visible ? 'home-header--visible' : ''}`}>
         <p className="home-saudacao">
@@ -86,7 +84,7 @@ export default function HomePage({ nomeUsuario = 'Admin' }) {
       </div>
 
       <p className={`home-rodape ${visible ? 'home-rodape--visible' : ''}`}>
-        Fonecta · Plataforma de Fornecedores
+        Fonecta · Plataforma de Compradores e Fornecedores
       </p>
     </div>
   )

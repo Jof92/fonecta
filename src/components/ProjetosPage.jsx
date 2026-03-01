@@ -51,13 +51,13 @@ export default function ProjetosPage() {
       <div className="projetos-header">
         <div className="projetos-header__left">
           <FaBuilding className="projetos-header__icon" />
-          <div>
+          <div className="projetos-heade-text">
             <h1 className="projetos-header__title">Projetos</h1>
             <p className="projetos-header__sub">Selecione um projeto para ver seus pedidos de cotação</p>
           </div>
         </div>
         <button className="btn-novo-projeto" onClick={() => setModalAberto(true)}>
-          <FaPlus /> Novo Projeto
+          <FaPlus />
         </button>
       </div>
 
